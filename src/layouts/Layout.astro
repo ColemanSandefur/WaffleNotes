@@ -1,0 +1,31 @@
+---
+import { Fragment } from "astro/jsx-runtime";
+import "../styles/global.css";
+import { Font } from "astro:assets";
+import SEO from "@/components/SEO.astro";
+import type { Props as SEOProps } from "@/components/SEO.astro";
+import { ClientRouter } from "astro:transitions";
+
+export interface Props extends SEOProps {}
+
+const props = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <Font cssVariable="--font-source-serif-4" />
+    <Font cssVariable="--font-libre-franklin" />
+    <Font cssVariable="--font-jetbrains-mono" />
+    <Font cssVariable="--font-newsreader" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <SEO {...props} />
+    <ClientRouter />
+  </head>
+  <body class="bg-background text-foreground min-h-screen">
+    <slot />
+  </body>
+</html>

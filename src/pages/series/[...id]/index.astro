@@ -1,0 +1,89 @@
+---
+import ContentSection from "@/components/ContentSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import type { CollectionEntry } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
+import { Image } from "astro:assets";
+import type { InferEntrySchema } from "astro:content";
+import ArchivePostCard from "@/components/ArchivePostCard.astro";
+
+interface Props {
+  series: CollectionEntry<"series">;
+}
+
+export async function getStaticPaths() {
+  const series = await getCollection("series");
+  return series.map((series) => ({
+    params: { id: series.id },
+    props: { series },
+  }));
+}
+
+const { series } = Astro.props;
+const { Content } = await render(series);
+
+const posts = await getCollection(
+  "post",
+  (post) => post.data.series?.id === series.id && post.data.draft === false,
+).then((value) =>
+  value.sort((a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()),
+);
+---
+
+<BaseLayout
+  title={series.data.title}
+  description={series.data.description}
+  image={series.data.coverImage}
+  type="article"
+>
+  <ContentSection>
+    <h1 class="text-4xl font-serif font-bold text-primary mt-12">
+      {series.data.title}
+    </h1>
+    <p class="pt-4 text-muted-foreground">
+      {series.data.description}
+    </p>
+    <div class="flex flex-row flex-wrap mt-4">
+      {
+        posts.length > 0 ? (
+          <p class="bg-primary text-primary-foreground font-mono text-xs py-1 px-3 uppercase rounded-sm">
+            {posts.length} Parts
+          </p>
+        ) : (
+          <p class="border border-border font-mono text-xs py-1 px-3 uppercase rounded-sm">
+            Empty
+          </p>
+        )
+      }
+    </div>
+
+    <div class="prose prose-themed post-content mt-8">
+      <Content />
+    </div>
+    <div class="flex flex-row justify-center gap-8 text-sm text-primary my-8">
+      <span>•</span>
+      <span>•</span>
+      <span>•</span>
+    </div>
+    <h2 class="text-2xl text-primary">Lesson Entries</h2>
+    <span class="block w-8 border-b-[1.5px] border-primary"></span>
+    <div class="flex flex-col gap-4 mt-8">
+      {posts.map((post) => <ArchivePostCard post={post} />)}
+      {
+        posts.length === 0 && (
+          <div class="flex flex-col justify-center items-center border border-border rounded-md px-4 py-16 gap-4">
+            <div class="size-10 aspect-square rounded-md bg-primary/30 text-primary-foreground flex justify-center items-center text-2xl">
+              📖
+            </div>
+            <p class="font-serif text-primary text-lg">
+              No lessons were found...
+            </p>
+            <p class="text-muted-foreground">
+              Please check back later to see the lessons for this series
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </ContentSection>
+</BaseLayout>

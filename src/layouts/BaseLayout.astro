@@ -1,0 +1,20 @@
+---
+import Header from "@/components/Header.astro";
+import Layout from "./Layout.astro";
+import type { Props as LayoutProps } from "./Layout.astro";
+import Footer from "@/components/Footer.astro";
+
+interface Props extends LayoutProps {}
+
+const props = Astro.props;
+---
+
+<Layout {...props}>
+  <div class="flex min-h-screen flex-col">
+    <Header />
+    <main class="flex-1" transition:animate="slide">
+      <slot />
+    </main>
+    <Footer />
+  </div>
+</Layout>

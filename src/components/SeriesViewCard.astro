@@ -1,0 +1,66 @@
+---
+import Image from "astro/components/Image.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  series: CollectionEntry<"series">;
+  numPosts: number;
+  latestPost?: CollectionEntry<"post">;
+}
+
+const { series, numPosts, latestPost } = Astro.props;
+const seriesData = series.data;
+const { title, description, coverImage } = seriesData;
+const formattedDate = latestPost?.data.pubDate.toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+});
+---
+
+<a
+  href=`/series/${series.id}`
+  class={"border border-border p-4 flex flex-col sm:flex-row gap-4 rounded-sm hover:bg-border/30 transition duration-200 ease-in-out hover:shadow-md"}
+>
+  <div class="flex sm:h-26 aspect-video overflow-hidden rounded-md">
+    <Image
+      src={coverImage}
+      alt={title}
+      width={640}
+      height={360}
+      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+      class="h-full w-full object-cover"
+      loading="lazy"
+    />
+  </div>
+  <div class="flex flex-col gap-2 grow flex-1">
+    <div class="flex flex-row items-center gap-2">
+      {
+        formattedDate ? (
+          <p class="text-xs font-mono text-primary font-light uppercase">
+            {formattedDate}
+          </p>
+        ) : (
+          <p class="text-xs font-mono text-muted-foreground font-light uppercase">
+            Coming Soon...
+          </p>
+        )
+      }
+      {
+        numPosts > 0 ? (
+          <p class="bg-primary text-primary-foreground font-mono text-xs py-1 px-3 uppercase rounded-sm ml-auto">
+            {numPosts} Parts
+          </p>
+        ) : (
+          <p class="border border-border font-mono text-xs py-1 px-3 uppercase rounded-sm ml-auto">
+            Empty
+          </p>
+        )
+      }
+    </div>
+    <p class="font-serif text-lg text-primary">{title}</p>
+    <p class="text-sm text-muted-foreground line-clamp-2">
+      {description}
+    </p>
+  </div>
+</a>

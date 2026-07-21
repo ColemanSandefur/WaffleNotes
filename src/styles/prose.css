@@ -1,0 +1,20 @@
+@config "./tailwind.config.js";
+
+@utility prose-themed {
+  --tw-prose-body: var(--color-foreground);
+  --tw-prose-headings: var(--color-primary);
+  --tw-prose-lead: var(--color-primary);
+  --tw-prose-links: var(--color-primary);
+  --tw-prose-bold: var(--color-primary);
+  --tw-prose-counters: var(--color-secondary);
+  --tw-prose-bullets: var(--color-secondary);
+  --tw-prose-hr: var(--color-primary);
+  --tw-prose-quotes: var(--color-secondary);
+  --tw-prose-quote-borders: var(--color-primary);
+  --tw-prose-captions: var(--color-primary);
+  --tw-prose-code: var(--color-foreground);
+  --tw-prose-pre-code: var(--color-secondary);
+  --tw-prose-pre-bg: var(--color-secondary-foreground);
+  --tw-prose-th-borders: var(--color-secondary);
+  --tw-prose-td-borders: var(--color-secondary);
+}

@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@import "./theme.css";
+
+@import "./prose.css";
+
+@layer base {
+  /* ... your existing base styles ... */
+
+  .prose-themed blockquote {
+    @apply border-t border-b border-border py-6 my-8 italic;
+  }
+
+  /* The quote icon */
+  .prose-themed blockquote::before {
+    content: "“";
+    @apply block text-4xl text-primary leading-none mb-2 font-serif;
+  }
+
+  .prose-themed blockquote > p {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .prose-themed
+    blockquote
+    p:not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0;
+  }
+
+  /* Ensure the paragraph inside the blockquote has no extra margin */
+  .prose-themed blockquote cite {
+    @apply not-italic text-primary font-serif my-0 block text-right;
+  }
+
+  .prose-themed blockquote cite::before {
+    content: "—";
+    @apply pr-2;
+  }
+
+  .prose-themed code {
+    @apply bg-secondary/10 text-secondary px-1 rounded-md;
+  }
+
+  .prose-themed blockquote.pullquote {
+    @apply text-center;
+  }
+
+  .prose-themed blockquote.pullquote::before {
+    content: none;
+    @apply text-center;
+  }
+
+  .prose-themed img {
+    @apply rounded-md;
+  }
+
+  .progress-bar::-webkit-slider-thumb {
+    @apply border border-border;
+  }
+
+  /* 1. Base input styling to clear default operating system styles */
+  input[type="range"].progress-bar {
+    -webkit-appearance: none; /* Hides default slider in WebKit */
+    appearance: none;
+    width: 100%; /* Full width container */
+    background: transparent; /* Removes default white background */
+    cursor: pointer;
+  }
+
+  /* Removes focus outline (optional, make sure to add custom focus states for accessibility) */
+  input[type="range"].progress-bar:focus {
+    outline: none;
+  }
+
+  /* 2. Customizing the Thumb for WebKit Browsers (Chrome, Safari, Opera, Edge) */
+  input[type="range"].progress-bar::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Overrides native styling */
+    appearance: none;
+
+    @apply size-3 bg-primary border-0 border-border rounded;
+  }
+
+  /* 3. Customizing the Thumb for Firefox */
+  input[type="range"].progress-bar::-moz-range-thumb {
+    /* Dimensions must exactly match the WebKit version for consistency */
+    @apply size-3 bg-primary border-0 border-border rounded;
+  }
+}

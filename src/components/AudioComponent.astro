@@ -1,0 +1,110 @@
+---
+import { PlayIcon, PauseIcon } from "@lucide/astro";
+interface Props {
+  src: string;
+}
+const { src } = Astro.props;
+---
+
+<div
+  class="audio-player p-2 flex flex-row gap-2 gap-y-4 rounded-sm border border-border"
+>
+  <button
+    class="play-btn size-10 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-2xl"
+  >
+    <span class="play-icon"><PlayIcon /></span>
+    <span class="pause-icon hidden"><PauseIcon /></span>
+  </button>
+
+  <div class="flex flex-col grow gap-2">
+    <div
+      class="flex justify-between items-center font-mono text-xs text-muted-foreground"
+    >
+      <span>Listen to Sermon</span>
+      <span class="time-display">00:00 / 00:00</span>
+    </div>
+
+    <div class="flex items-center justify-center grow">
+      <input
+        type="range"
+        class="progress-bar w-full h-1 bg-border rounded-full appearance-none cursor-pointer accent-secondary-foreground"
+        value="0"
+        min="0"
+        max="100"
+      />
+    </div>
+  </div>
+
+  <audio src={src} class="hidden"></audio>
+</div>
+
+<script>
+  document.querySelectorAll(".audio-player").forEach((player) => {
+    const audio = player.querySelector("audio") as HTMLAudioElement;
+    const btn = player.querySelector(".play-btn") as HTMLButtonElement;
+    const progress = player.querySelector(".progress-bar") as HTMLInputElement;
+    const timeDisplay = player.querySelector(
+      ".time-display",
+    ) as HTMLSpanElement;
+
+    const formatTime = (s: number) => {
+      const mins = Math.floor(s / 60);
+      const secs = Math.floor(s % 60);
+      return `${mins}:${secs.toString().padStart(2, "0")}`;
+    };
+
+    const updateTimestamp = () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.value = percent.toString();
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration || 0)}`;
+    };
+
+    const updateTrackColor = () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progress.value = percent.toString();
+
+      // Update the gradient dynamically
+      progress.style.background = `linear-gradient(to right, var(--primary) ${percent}%, var(--border) ${percent}%)`;
+
+      timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration || 0)}`;
+    };
+
+    const onInputUpdate = () => {
+      updateTimestamp();
+      updateTrackColor();
+    };
+
+    onInputUpdate();
+
+    btn.addEventListener("click", () => {
+      const playIcon = btn.querySelector(".play-icon")!;
+      const pauseIcon = btn.querySelector(".pause-icon")!;
+
+      if (audio.paused) {
+        audio.play();
+        playIcon.classList.add("hidden");
+        pauseIcon.classList.remove("hidden");
+      } else {
+        audio.pause();
+        playIcon.classList.remove("hidden");
+        pauseIcon.classList.add("hidden");
+      }
+
+      onInputUpdate();
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      onInputUpdate();
+    });
+
+    progress.addEventListener("input", () => {
+      audio.currentTime = (parseFloat(progress.value) / 100) * audio.duration;
+      onInputUpdate();
+    });
+
+    // Add this inside your existing timeupdate listener
+    audio.addEventListener("timeupdate", () => {
+      onInputUpdate();
+    });
+  });
+</script>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  href: string;
+}
+
+const pathname = Astro.url.pathname;
+const href = Astro.props.href;
+
+const isActive = href === pathname || pathname.startsWith(href + "/");
+---
+
+<a
+  href={href}
+  class={"font-mono text-sm font-light" +
+    (isActive ? " border-b-2 border-b-primary" : "")}><slot /></a
+>

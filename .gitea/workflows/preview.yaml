@@ -1,0 +1,42 @@
+name: "Netlify Previews"
+
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Sets the branch name as environment variable
+      - uses: nelonoel/branch-name@v1.0.1
+
+      - name: Deploy to Netlify
+        uses: jsmrcaga/action-netlify-deploy@v2.4.0
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          deploy_alias: ${{ env.BRANCH_NAME }}
+          build_directory: "dist"
+
+      - name: Create commit status
+        if: success()
+        run: |
+          curl \
+            -X POST \
+            -H "Authorization: token ${{ gitea.token }}" \
+            -H "Content-Type: application/json" \
+            "${{ gitea.server_url }}/api/v1/repos/${{ gitea.repository }}/statuses/${{ gitea.sha }}" \
+            -d @- <<EOF
+          {
+            "state": "success",
+            "context": "Netlify preview",
+            "description": "Preview deployed",
+            "target_url": "${{ env.NETLIFY_PREVIEW_URL }}"
+          }
+          EOF

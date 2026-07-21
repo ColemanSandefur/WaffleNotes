@@ -1,0 +1,16 @@
+---
+import ContentSection from "@/components/ContentSection.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+import * as aboutPost from "@/content/pages/about.md";
+const compiled = await aboutPost.compiledContent();
+const { title, description } = aboutPost.frontmatter;
+---
+
+<BaseLayout title={title} description={description}>
+  <ContentSection>
+    <div class="prose prose-themed post-content mt-12">
+      <Fragment set:html={compiled} />
+    </div>
+  </ContentSection>
+</BaseLayout>

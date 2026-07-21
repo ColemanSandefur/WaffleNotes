@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Home",
+    "link": "/"
+  },
+  {
+    "name": "Posts",
+    "link": "/posts"
+  },
+  {
+    "name": "Series",
+    "link": "/series"
+  },
+  {
+    "name": "About",
+    "link": "/about"
+  }
+]
