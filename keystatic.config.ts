@@ -1,8 +1,15 @@
 import { config, fields, collection, singleton } from "@keystatic/core";
 
+const REPO_OWNER = "ColemanSandefur";
+const REPO_NAME = "WaffleNotes";
+
 export default config({
   storage: {
-    kind: "local",
+    kind: "github",
+    repo: {
+      name: REPO_NAME,
+      owner: REPO_OWNER,
+    },
   },
   ui: {
     brand: {
