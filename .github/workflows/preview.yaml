@@ -1,4 +1,4 @@
-name: "Netlify Preview - PR"
+name: "Netlify Preview"
 
 on:
   push:
@@ -9,6 +9,9 @@ jobs:
   deploy:
     name: "Deploy"
     runs-on: ubuntu-latest
+    permissions:
+      statuses: write # Required for Sibz/github-status-action
+      contents: read
 
     steps:
       - uses: actions/checkout@v4

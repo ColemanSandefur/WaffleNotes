@@ -1,4 +1,4 @@
-name: "Netlify Previews"
+name: "Netlify Preview"
 
 on:
   push:
