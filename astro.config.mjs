@@ -5,26 +5,26 @@ import sitemap from "@astrojs/sitemap";
 import react from "@astrojs/react";
 import markdoc from "@astrojs/markdoc";
 import keystatic from "@keystatic/astro";
-
 import node from "@astrojs/node";
+import netlify from "@astrojs/netlify";
 
 const isProduction = process.env.NODE_ENV === "production";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://wafflenotes.netlify.app",
+
   ...(isProduction
-    ? {}
+    ? {
+        adapter: netlify(),
+      }
     : {
         adapter: node({
           mode: "standalone",
         }),
       }),
 
-  integrations: [
-    sitemap(),
-    ...(isProduction ? [] : [react(), markdoc(), keystatic()]),
-  ],
+  integrations: [sitemap(), react(), markdoc(), keystatic()],
 
   vite: {
     plugins: [tailwindcss()],
