@@ -1,9 +1,6 @@
 ---
 title: About WaffleNotes
 description: A brief introduction to WaffleNotes, a faith-centered blog and notes page rooted in the Churches of Christ.
-pubDate: 2026-07-18
-author: wafflenotes
-coverImage: "@/images/nature.jpg"
 ---
 
 # About WaffleNotes

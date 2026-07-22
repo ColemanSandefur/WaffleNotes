@@ -1,0 +1,23 @@
+name: "Publish to Netlify"
+
+on:
+  release:
+    types: ["published"]
+
+jobs:
+  deploy:
+    name: "Deploy"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Netlify
+        uses: jsmrcaga/action-netlify-deploy@v2.4.0
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_DEPLOY_MESSAGE: "Prod deploy ${{ github.ref }}"
+          NETLIFY_DEPLOY_TO_PROD: true
+          build_directory: "dist" # Ensure this matches your Astro output folder
