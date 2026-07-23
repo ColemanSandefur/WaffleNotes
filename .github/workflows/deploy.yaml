@@ -21,3 +21,4 @@ jobs:
           NETLIFY_DEPLOY_MESSAGE: "Prod deploy ${{ github.ref }}"
           NETLIFY_DEPLOY_TO_PROD: true
           build_directory: "dist" # Ensure this matches your Astro output folder
+          functions_directory: "netlify/functions"

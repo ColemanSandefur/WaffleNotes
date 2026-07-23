@@ -29,6 +29,7 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           deploy_alias: ${{ env.BRANCH_NAME }}
           build_directory: "dist"
+          functions_directory: "netlify/functions"
 
       - name: Status check
         uses: Sibz/github-status-action@v1.1.1
