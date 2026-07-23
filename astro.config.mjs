@@ -15,8 +15,6 @@ export default defineConfig({
     imageCDN: false,
   }),
 
-  output: "server",
-
   integrations: [sitemap(), react(), markdoc(), keystatic()],
 
   vite: {
