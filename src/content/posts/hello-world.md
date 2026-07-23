@@ -5,6 +5,7 @@ pubDate: 2026-07-22T21:22:00.000Z
 author: coleman-sandefur
 draft: false
 coverImage: /src/images/posts/hello-world/coverImage.jpg
+series: hello-world
 ---
 # Hello World!
 
