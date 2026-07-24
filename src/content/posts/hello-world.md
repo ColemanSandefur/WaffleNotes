@@ -6,7 +6,12 @@ author: coleman-sandefur
 draft: false
 coverImage: /src/images/posts/hello-world/coverImage.jpg
 series: hello-world
+tags:
+  - hello-world
+  - love
+  - world
 ---
+
 # Hello World!
 
 This is my test page where I'll post whatever I want!

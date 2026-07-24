@@ -17,6 +17,7 @@ const post = defineCollection({
       coverImage: image(),
       series: reference("series").optional(),
       audioUrl: z.string().optional(),
+      tags: z.array(z.string()).default([]),
     }),
 });
 

@@ -4,6 +4,8 @@ description: A typographic inventory of every markdown element Lipi renders, wri
 pubDate: 2026-07-18
 author: coleman-sandefur
 coverImage: "@/images/boat.jpg"
+tags:
+  - tutorial
 ---
 
 <blockquote class="pullquote">

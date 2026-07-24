@@ -2,8 +2,9 @@ import { useState, useMemo } from "preact/hooks";
 import Fuse from "fuse.js";
 import ArchivePostCard from "./ArchivePostCard";
 import ArchiveSeriesCard from "./ArchiveSeriesCard";
-import type { ImageMetadata } from "astro";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-preact";
+import Tag from "./Tag";
+import { cn } from "@/lib/utils";
 
 export interface OptimizedImage {
   src: string;
@@ -19,6 +20,7 @@ export interface SeriesSearchItem {
   date?: number;
   coverImage: OptimizedImage;
   numPosts: number;
+  tags?: string[];
 }
 
 export type PostSearchItem = {
@@ -27,6 +29,7 @@ export type PostSearchItem = {
   description: string;
   date: number;
   coverImage: OptimizedImage;
+  tags?: string[];
 };
 
 export type ArchiveSearchProps =
@@ -53,12 +56,13 @@ export default function ArchiveSearch({
   const [currentPage, setCurrentPage] = useState(1);
   const [direction, setDirection] = useState<"next" | "prev" | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | undefined>();
 
   // Initialize Fuse.js once per mount with unified type
   const fuse = useMemo(
     () =>
       new Fuse<SearchItemUnion>(items as SearchItemUnion[], {
-        keys: ["title", "description"],
+        keys: ["title", "description", "tags"],
         threshold: 0.3,
         ignoreLocation: true,
       }),
@@ -74,12 +78,16 @@ export default function ArchiveSearch({
       result = searchResults.map((r) => r.item);
     }
 
-    return [...result].sort((a, b) => {
-      const dateA = a.date ?? 0;
-      const dateB = b.date ?? 0;
-      return sortBy === "newest" ? dateB - dateA : dateA - dateB;
-    });
-  }, [query, sortBy, items, fuse]);
+    return [...result]
+      .filter((item) =>
+        selectedTag === undefined ? true : item.tags?.includes(selectedTag),
+      )
+      .sort((a, b) => {
+        const dateA = a.date ?? 0;
+        const dateB = b.date ?? 0;
+        return sortBy === "newest" ? dateB - dateA : dateA - dateB;
+      });
+  }, [query, sortBy, items, fuse, selectedTag]);
 
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage) || 1;
   const safePage = Math.min(currentPage, totalPages);
@@ -100,6 +108,12 @@ export default function ArchiveSearch({
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 200);
   };
+
+  const tags = useMemo(() => {
+    const set = new Set<string>();
+    items.forEach((item) => item.tags?.forEach((tag) => set.add(tag)));
+    return set.keys().toArray();
+  }, [items]);
 
   return (
     <div>
@@ -142,10 +156,35 @@ export default function ArchiveSearch({
         </span>
       </div>
 
-      <div className="flex flex-row flex-wrap mt-4">
-        <p className="text-xs font-mono bg-primary text-primary-foreground py-1 px-4 rounded-full">
-          All {type === "post" ? "Posts" : "Series"}
-        </p>
+      <div className="flex flex-row flex-wrap mt-4 gap-2">
+        <Tag
+          asChild
+          className={cn("cursor-pointer transition duration-200 ease-in-out", {
+            "hover:bg-border/30": !!selectedTag,
+          })}
+          variant={!selectedTag ? "primary" : "default"}
+        >
+          <button type="button" onClick={() => setSelectedTag(undefined)}>
+            All {type === "post" ? "Posts" : "Series"}
+          </button>
+        </Tag>
+        {tags.map((tag) => (
+          <Tag
+            key={tag}
+            asChild
+            className={cn(
+              "cursor-pointer transition duration-200 ease-in-out",
+              {
+                "hover:bg-border/30": tag !== selectedTag,
+              },
+            )}
+            variant={tag === selectedTag ? "primary" : "default"}
+          >
+            <button type="button" onClick={() => setSelectedTag(tag)}>
+              {tag}
+            </button>
+          </Tag>
+        ))}
       </div>
 
       {/* Animated Items Container */}
@@ -171,6 +210,7 @@ export default function ArchiveSearch({
                 description={item.description}
                 coverImage={item.coverImage}
                 pubDate={(item as PostSearchItem).date}
+                tags={(item as PostSearchItem).tags}
               />
             ) : (
               <ArchiveSeriesCard

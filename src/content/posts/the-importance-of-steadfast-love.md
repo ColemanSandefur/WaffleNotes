@@ -6,6 +6,8 @@ author: wafflenotes
 coverImage: "@/images/nature.jpg"
 draft: false
 audioUrl: https://static.wixstatic.com/mp3/b84511_d9e9f0d0ad0a44e5b679191fa7c3479b.mp3
+tags:
+  - love
 ---
 
 # The Importance of Steadfast Love
