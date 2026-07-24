@@ -1,9 +1,11 @@
 ---
-import ArchivePostCard from "@/components/ArchivePostCard.astro";
 import ContentSection from "@/components/ContentSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { ArrowLeftIcon, ArrowRightIcon } from "@lucide/astro";
+import ArchiveSearch, {
+  type PostSearchItem,
+} from "@/components/preact/ArchiveSearch";
 import { getCollection } from "astro:content";
+import { getImage } from "astro:assets";
 
 const posts = await getCollection(
   "post",
@@ -12,24 +14,29 @@ const posts = await getCollection(
   value.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
 );
 
-export type PostSearchIndexData = {
-  id: string;
-  index: number;
-  title: string;
-  description: string;
-  date: number;
-};
+// Map items for Preact, including pre-rendered card templates via Astro components
+// Note: Preact islands can render serializable props or HTML strings cleanly.
+const searchItems = await Promise.all(
+  posts.map(async (post) => {
+    const optimizedImage = await getImage({
+      src: post.data.coverImage,
+      width: 640,
+      height: 360,
+    });
 
-// Serialize metadata into plain JSON for client-side search
-const searchIndexData = posts.map(
-  (post, index) =>
-    ({
+    return {
       id: post.id,
-      index: index,
       title: post.data.title,
       description: post.data.description,
       date: post.data.pubDate.valueOf(),
-    }) satisfies PostSearchIndexData,
+      coverImage: {
+        src: optimizedImage.src,
+        srcSet: optimizedImage.srcSet.attribute, // Astro's generated srcset string
+        width: 640,
+        height: 360,
+      },
+    } satisfies PostSearchItem;
+  }),
 );
 ---
 
@@ -45,304 +52,6 @@ const searchIndexData = posts.map(
       A collection of reflections, essays, and other writings.
     </p>
 
-    <!-- Search Bar and Filters -->
-    <div class="flex flex-col sm:flex-row gap-3 mt-12">
-      <span class="flex flex-col grow gap-2">
-        <label for="search" class="font-mono text-sm text-primary"
-          >Search posts</label
-        >
-        <input
-          id="search"
-          type="text"
-          placeholder="Search by title, author, or keyword..."
-          class="px-4 h-10 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-        />
-      </span>
-      <span class="flex flex-col gap-2">
-        <label for="sort" class="font-mono text-sm text-primary">Sort by</label>
-        <select
-          id="sort"
-          class="px-4 h-10 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-        >
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-        </select>
-      </span>
-    </div>
-    <div class="flex flex-row flex-wrap mt-4">
-      <p
-        class="text-xs font-mono bg-primary text-primary-foreground py-1 px-4 rounded-full"
-      >
-        All Posts
-      </p>
-    </div>
-
-    <!-- Cards Container -->
-    <div id="posts-container" class="flex flex-col gap-4 mt-12">
-      {
-        posts.map((post) => (
-          <div
-            class="post-item transition-all duration-200"
-            data-id={post.id}
-            data-date={post.data.pubDate.valueOf()}
-          >
-            <ArchivePostCard post={post} />
-          </div>
-        ))
-      }
-    </div>
-
-    <p
-      id="no-results"
-      class="hidden text-muted-foreground font-mono text-center py-12"
-    >
-      No matching posts found.
-    </p>
-
-    <!-- Pagination Controls -->
-    <nav
-      id="pagination-controls"
-      class="flex justify-between items-center mt-8 font-mono text-sm"
-    >
-      <button
-        id="prev-page"
-        class="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
-      >
-        <ArrowLeftIcon class="size-4" />
-        Previous
-      </button>
-      <span id="page-info" class="text-muted-foreground">Page 1 of 1</span>
-      <button
-        id="next-page"
-        class="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
-      >
-        Next
-        <ArrowRightIcon class="size-4" />
-      </button>
-    </nav>
+    <ArchiveSearch client:load items={searchItems} type="post" />
   </ContentSection>
-
-  <script
-    type="application/json"
-    id="search-data"
-    set:html={JSON.stringify(searchIndexData)}
-  />
-
-  <script>
-    import type { PostSearchIndexData } from "./index.astro";
-    import Fuse from "fuse.js";
-
-    function initSearch() {
-      const searchInput = document.getElementById("search") as HTMLInputElement;
-      const sortSelect = document.getElementById("sort") as HTMLSelectElement;
-      const container = document.getElementById("posts-container");
-      const noResults = document.getElementById("no-results");
-      const prevButton = document.getElementById(
-        "prev-page",
-      ) as HTMLButtonElement;
-      const nextButton = document.getElementById(
-        "next-page",
-      ) as HTMLButtonElement;
-      const pageInfo = document.getElementById("page-info");
-      const dataScript = document.getElementById("search-data");
-
-      if (!searchInput || !sortSelect || !container || !dataScript) return;
-
-      const searchIndexData = JSON.parse(
-        dataScript.textContent || "[]",
-      ) as PostSearchIndexData[];
-
-      const ITEMS_PER_PAGE = 10; // Adjust items per page if needed
-      let currentPage = 1;
-
-      // Initialize Fuse.js for fuzzy search
-      const fuse = new Fuse(searchIndexData, {
-        keys: ["title", "description"],
-        threshold: 0.3,
-        ignoreLocation: true,
-      });
-
-      function updateView() {
-        if (!container) return;
-
-        const query = searchInput.value.trim();
-        const sortBy = sortSelect.value;
-        const items = Array.from(
-          container.getElementsByClassName("post-item"),
-        ) as HTMLElement[];
-
-        let resultsById = new Map<String, number>();
-
-        if (query.length > 0) {
-          const results = fuse.search(query);
-          console.log("Results for:", query, results);
-          results.forEach((r, idx) => resultsById.set(r.item.id, idx));
-        } else {
-          searchIndexData.forEach((item, idx) => resultsById.set(item.id, idx));
-        }
-
-        // Filter items based on matched ID
-        let filteredItems = items.filter((item) => {
-          const id = item.getAttribute("data-id");
-          return id ? resultsById.has(id) : false;
-        });
-
-        // Sort items: if there's a search query, preserve Fuse.js relevance order.
-        // If no query, respect the user's sort dropdown selection (newest/oldest).
-        if (query.length > 0) {
-          filteredItems.sort((a, b) => {
-            const idA = a.getAttribute("data-id") || "";
-            const idB = b.getAttribute("data-id") || "";
-            return (resultsById.get(idA) ?? 0) - (resultsById.get(idB) ?? 0);
-          });
-        } else {
-          filteredItems.sort((a, b) => {
-            const dateA = Number(a.getAttribute("data-date") || 0);
-            const dateB = Number(b.getAttribute("data-date") || 0);
-            return sortBy === "newest" ? dateB - dateA : dateA - dateB;
-          });
-        }
-
-        const totalPages =
-          Math.ceil(filteredItems.length / ITEMS_PER_PAGE) || 1;
-        if (currentPage > totalPages) {
-          currentPage = 1;
-        }
-
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
-
-        items.forEach((item) => (item.style.display = "none"));
-
-        filteredItems.forEach((item, index) => {
-          container.appendChild(item);
-          if (index >= startIndex && index < endIndex) {
-            item.style.display = "";
-          }
-        });
-
-        if (noResults) {
-          if (filteredItems.length === 0) {
-            noResults.classList.remove("hidden");
-            if (pageInfo) pageInfo.style.display = "none";
-            if (prevButton) prevButton.style.display = "none";
-            if (nextButton) nextButton.style.display = "none";
-          } else {
-            noResults.classList.add("hidden");
-            if (pageInfo) {
-              pageInfo.style.display = "";
-              pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
-            }
-            if (prevButton) {
-              prevButton.style.display = "";
-              prevButton.disabled = currentPage === 1;
-            }
-            if (nextButton) {
-              nextButton.style.display = "";
-              nextButton.disabled = currentPage === totalPages;
-            }
-          }
-        }
-      }
-
-      searchInput.addEventListener("input", () => {
-        currentPage = 1;
-        updateView();
-      });
-
-      sortSelect.addEventListener("change", () => {
-        currentPage = 1;
-        updateView();
-      });
-
-      function transitionPage(direction: "next" | "prev", action: () => void) {
-        if (!container) return;
-
-        // 1. Slide out in the direction of travel
-        const outClass =
-          direction === "next" ? "slide-out-left" : "slide-out-right";
-        container.classList.add(outClass);
-
-        setTimeout(() => {
-          // 2. Perform page change
-          action();
-
-          // 3. Prepare slide-in from the opposite side
-          container.classList.remove(outClass);
-          const fromVal = direction === "next" ? "30px" : "-30px";
-          container.style.setProperty("--slide-from", fromVal);
-          container.classList.add("slide-in");
-
-          setTimeout(() => {
-            container.classList.remove("slide-in");
-          }, 250);
-        }, 200);
-      }
-
-      prevButton?.addEventListener("click", () => {
-        if (currentPage > 1) {
-          transitionPage("prev", () => {
-            currentPage--;
-            updateView();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-        }
-      });
-
-      nextButton?.addEventListener("click", () => {
-        const query = searchInput.value.trim();
-        let matchedCount = searchIndexData.length;
-        if (query.length > 0) {
-          matchedCount = fuse.search(query).length;
-        }
-        const totalPages = Math.ceil(matchedCount / ITEMS_PER_PAGE);
-
-        if (currentPage < totalPages) {
-          transitionPage("next", () => {
-            currentPage++;
-            updateView();
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          });
-        }
-      });
-
-      updateView();
-    }
-
-    initSearch();
-    document.addEventListener("astro:page-load", initSearch);
-  </script>
-
-  <style>
-    #posts-container {
-      transition:
-        transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-        opacity 0.25s ease-in-out;
-    }
-
-    .slide-out-left {
-      transform: translateX(-60px);
-      opacity: 0;
-    }
-
-    .slide-out-right {
-      transform: translateX(60px);
-      opacity: 0;
-    }
-
-    .slide-in {
-      animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: var(--slide-from);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-  </style>
 </BaseLayout>
