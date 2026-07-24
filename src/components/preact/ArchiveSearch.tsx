@@ -2,7 +2,6 @@ import { useState, useMemo } from "preact/hooks";
 import Fuse from "fuse.js";
 import ArchivePostCard from "./ArchivePostCard";
 import ArchiveSeriesCard from "./ArchiveSeriesCard";
-import type { ImageMetadata } from "astro";
 
 export interface OptimizedImage {
   src: string;

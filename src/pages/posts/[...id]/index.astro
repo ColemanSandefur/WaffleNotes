@@ -1,5 +1,5 @@
 ---
-import AudioComponent from "@/components/AudioComponent.astro";
+import AudioComponent from "@/components/preact/AudioComponent";
 import ContentSection from "@/components/ContentSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { CollectionEntry } from "astro:content";
@@ -198,7 +198,7 @@ const audioUrl = post.data.audioUrl;
             }
             {
               audioUrl && (
-                <AudioComponent src={audioUrl} />
+                <AudioComponent client:load src={audioUrl} />
               )
             }
           </div>
