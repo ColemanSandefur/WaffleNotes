@@ -3,6 +3,13 @@ import ContentSection from "@/components/ContentSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import * as seriesPost from "@/content/pages/series.md";
+import type { SeriesSearchItem } from "@/components/preact/ArchiveSearch";
+import ArchiveSearch from "@/components/preact/ArchiveSearch";
+import { getImage } from "astro:assets";
+
+const compiled = await seriesPost.compiledContent();
+const { title, description } = seriesPost.frontmatter;
 
 const posts = await getCollection(
   "post",
@@ -34,11 +41,29 @@ const series = await getCollection(
   ),
 );
 
-import * as aboutPost from "@/content/pages/series.md";
-import { Image } from "astro:assets";
-import SeriesViewCard from "@/components/SeriesViewCard.astro";
-const compiled = await aboutPost.compiledContent();
-const { title, description } = aboutPost.frontmatter;
+const searchItems = await Promise.all(
+  series.map(async (post) => {
+    const optimizedImage = await getImage({
+      src: post.data.coverImage,
+      width: 640,
+      height: 360,
+    });
+
+    return {
+      id: post.id,
+      title: post.data.title,
+      description: post.data.description,
+      date: getLatestPost(post)?.data.pubDate.valueOf(),
+      coverImage: {
+        src: optimizedImage.src,
+        srcSet: optimizedImage.srcSet.attribute, // Astro's generated srcset string
+        width: 640,
+        height: 360,
+      },
+      numPosts: getNumPosts(post),
+    } satisfies SeriesSearchItem;
+  }),
+);
 ---
 
 <BaseLayout title={title} description={description}>
@@ -57,45 +82,6 @@ const { title, description } = aboutPost.frontmatter;
         </div>
       )
     }
-    <div class="flex flex-col sm:flex-row gap-3 mt-12">
-      <span class="flex flex-col grow gap-2">
-        <label for="search" class="font-mono text-sm text-primary"
-          >Search series</label
-        >
-        <input
-          type="text"
-          placeholder="Search by title or keyword..."
-          class="px-4 h-10 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-        />
-      </span>
-      <span class="flex flex-col gap-2">
-        <label for="sort" class="font-mono text-sm text-primary">Sort by</label>
-        <select
-          id="sort"
-          class="px-4 h-10 border border-border rounded-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-        >
-          <option value="newest">Newest</option>
-          <option value="oldest">Oldest</option>
-        </select>
-      </span>
-    </div>
-    <div class="flex flex-row flex-wrap mt-4">
-      <p
-        class="text-xs font-mono bg-primary text-primary-foreground py-1 px-4 rounded-full"
-      >
-        All Series
-      </p>
-    </div>
-    <div class="flex flex-col gap-4 mt-12">
-      {
-        series.map((series) => (
-          <SeriesViewCard
-            series={series}
-            numPosts={getNumPosts(series)}
-            latestPost={getLatestPost(series)}
-          />
-        ))
-      }
-    </div>
+    <ArchiveSearch client:load items={searchItems} type="series" />
   </ContentSection>
 </BaseLayout>

@@ -7,6 +7,8 @@ import markdoc from "@astrojs/markdoc";
 import keystatic from "@keystatic/astro";
 import netlify from "@astrojs/netlify";
 
+import preact from "@astrojs/preact";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://wafflenotes.netlify.app",
@@ -15,7 +17,17 @@ export default defineConfig({
     imageCDN: false,
   }),
 
-  integrations: [sitemap(), react(), markdoc(), keystatic()],
+  integrations: [
+    sitemap(),
+    react({
+      exclude: "**/preact/*",
+    }),
+    markdoc(),
+    keystatic(),
+    preact({
+      include: "**/preact/*",
+    }),
+  ],
 
   vite: {
     plugins: [tailwindcss()],
