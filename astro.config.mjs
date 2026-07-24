@@ -6,7 +6,6 @@ import react from "@astrojs/react";
 import markdoc from "@astrojs/markdoc";
 import keystatic from "@keystatic/astro";
 import netlify from "@astrojs/netlify";
-
 import preact from "@astrojs/preact";
 
 // https://astro.build/config

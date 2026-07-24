@@ -53,6 +53,7 @@ export default config({
           label: "Series",
           collection: "series",
         }),
+        tags: fields.array(fields.text({ label: "Tag" }), { label: "Tags" }),
         audioUrl: fields.url({ label: "Audio URL" }),
         content: fields.markdoc({
           label: "Content",

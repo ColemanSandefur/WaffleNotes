@@ -35,6 +35,7 @@ const searchItems = await Promise.all(
         width: 640,
         height: 360,
       },
+      tags: post.data.tags,
     } satisfies PostSearchItem;
   }),
 );

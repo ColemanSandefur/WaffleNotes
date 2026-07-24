@@ -1,4 +1,5 @@
 import { BookOpenTextIcon } from "lucide-preact";
+import Tag from "./Tag";
 
 export interface SeriesPartBadgeProps {
   numPosts: number;
@@ -7,13 +8,13 @@ export interface SeriesPartBadgeProps {
 
 export default function SeriesPartBadge({ numPosts }: SeriesPartBadgeProps) {
   return numPosts > 0 ? (
-    <p class="bg-primary text-primary-foreground font-mono text-xs py-1 px-3 uppercase rounded-sm flex flex-row items-center gap-2">
-      <BookOpenTextIcon class="size-3" />
+    <Tag variant="primary" size="sm">
+      <BookOpenTextIcon className="size-3" />
       {numPosts} Part{numPosts !== 1 && "s"}
-    </p>
+    </Tag>
   ) : (
-    <p class="border border-border font-mono text-xs py-1 px-3 uppercase rounded-sm ml-auto">
+    <Tag variant="default" size="sm">
       Empty
-    </p>
+    </Tag>
   );
 }

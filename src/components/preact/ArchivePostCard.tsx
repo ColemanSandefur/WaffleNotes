@@ -1,4 +1,6 @@
+import { TagsIcon } from "lucide-preact";
 import type { OptimizedImage } from "./ArchiveSearch";
+import Tag from "./Tag";
 
 export interface ArchivePostCardProps {
   id: string;
@@ -6,6 +8,7 @@ export interface ArchivePostCardProps {
   description: string;
   coverImage: OptimizedImage;
   pubDate: number | string | Date;
+  tags?: string[];
 }
 
 export default function ArchivePostCard({
@@ -14,6 +17,7 @@ export default function ArchivePostCard({
   description,
   coverImage,
   pubDate,
+  tags = [],
 }: ArchivePostCardProps) {
   const dateObj = new Date(pubDate);
   const formattedDate = dateObj.toLocaleDateString("en-US", {
@@ -40,9 +44,19 @@ export default function ArchivePostCard({
         />
       </div>
       <div className="flex flex-col gap-2 grow flex-1">
-        <p className="text-xs font-mono text-primary font-light uppercase">
-          {formattedDate}
-        </p>
+        <div className="flex flex-row justify-between items-center gap-2">
+          <p className="text-xs font-mono text-primary font-light uppercase">
+            {formattedDate}
+          </p>
+          <span className="flex flex-row gap-2">
+            {tags.length > 0 && (
+              <Tag>
+                <TagsIcon class="size-3" />
+                {tags.length}
+              </Tag>
+            )}
+          </span>
+        </div>
         <p className="font-serif text-lg text-primary">{title}</p>
         <p className="text-sm text-muted-foreground line-clamp-2">
           {description}

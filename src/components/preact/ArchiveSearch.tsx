@@ -26,6 +26,7 @@ export type PostSearchItem = {
   description: string;
   date: number;
   coverImage: OptimizedImage;
+  tags?: string[];
 };
 
 export type ArchiveSearchProps =
@@ -170,6 +171,7 @@ export default function ArchiveSearch({
                 description={item.description}
                 coverImage={item.coverImage}
                 pubDate={(item as PostSearchItem).date}
+                tags={(item as PostSearchItem).tags}
               />
             ) : (
               <ArchiveSeriesCard
