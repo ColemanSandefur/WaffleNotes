@@ -2,6 +2,8 @@ import { useState, useMemo } from "preact/hooks";
 import Fuse from "fuse.js";
 import ArchivePostCard from "./ArchivePostCard";
 import ArchiveSeriesCard from "./ArchiveSeriesCard";
+import type { ImageMetadata } from "astro";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-preact";
 
 export interface OptimizedImage {
   src: string;
@@ -193,34 +195,37 @@ export default function ArchiveSearch({
       {/* Pagination Controls */}
       {totalPages > 1 && (
         <>
-          <nav className="sm:hidden flex justify-between flex-col items-center mt-8 font-mono text-sm">
+          <nav className="sm:hidden flex justify-between flex-col items-center mt-8 font-mono text-sm gap-4">
             <span className="text-muted-foreground">
               Page {safePage} of {totalPages}
             </span>
-            <span className="flex flex-row justify-between w-full">
+            <span className="flex flex-row justify-between w-full gap-4">
               <button
                 onClick={() => handlePageChange(safePage - 1, "prev")}
                 disabled={safePage === 1}
-                className="px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
+                className="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
               >
-                ← Previous
+                <ArrowLeftIcon className="size-4" />
+                Previous
               </button>
               <button
                 onClick={() => handlePageChange(safePage + 1, "next")}
                 disabled={safePage === totalPages}
-                className="px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
+                className="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
               >
-                Next →
+                Next
+                <ArrowRightIcon className="size-4" />
               </button>
             </span>
           </nav>
-          <nav className="hidden sm:flex justify-between items-center mt-8 font-mono text-sm">
+          <nav className="hidden sm:flex justify-between items-center mt-8 font-mono text-sm gap-4">
             <button
               onClick={() => handlePageChange(safePage - 1, "prev")}
               disabled={safePage === 1}
-              className="px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
+              className="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
             >
-              ← Previous
+              <ArrowLeftIcon className="size-4" />
+              Previous
             </button>
             <span className="text-muted-foreground">
               Page {safePage} of {totalPages}
@@ -228,9 +233,10 @@ export default function ArchiveSearch({
             <button
               onClick={() => handlePageChange(safePage + 1, "next")}
               disabled={safePage === totalPages}
-              className="px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
+              className="flex flex-row items-center gap-2 px-4 py-2 border border-border rounded-sm disabled:opacity-30 disabled:cursor-not-allowed hover:bg-muted"
             >
-              Next →
+              Next
+              <ArrowRightIcon className="size-4" />
             </button>
           </nav>
         </>
