@@ -1,4 +1,3 @@
-import type { ImageMetadata } from "astro";
 import type { OptimizedImage } from "./ArchiveSearch";
 
 export interface ArchivePostCardProps {

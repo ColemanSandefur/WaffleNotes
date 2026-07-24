@@ -1,4 +1,3 @@
-import type { ImageMetadata } from "astro";
 import SeriesPartBadge from "./SeriesPartBadge";
 import type { OptimizedImage } from "./ArchiveSearch";
 
