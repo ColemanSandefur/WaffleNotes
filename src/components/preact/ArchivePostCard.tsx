@@ -1,4 +1,4 @@
-import { TagsIcon } from "lucide-preact";
+import { PlusIcon, TagsIcon } from "lucide-preact";
 import type { OptimizedImage } from "./ArchiveSearch";
 import Tag from "./Tag";
 
@@ -26,6 +26,11 @@ export default function ArchivePostCard({
     year: "numeric",
   });
 
+  // Define how many tags to display before hiding the rest
+  const MAX_VISIBLE_TAGS = 1;
+  const visibleTags = tags.slice(0, MAX_VISIBLE_TAGS);
+  const hiddenCount = tags.length - MAX_VISIBLE_TAGS;
+
   return (
     <a
       href={`/posts/${id}`}
@@ -44,15 +49,23 @@ export default function ArchivePostCard({
         />
       </div>
       <div className="flex flex-col gap-2 grow flex-1">
-        <div className="flex flex-row justify-between items-center gap-2">
+        <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
           <p className="text-xs font-mono text-primary font-light uppercase">
             {formattedDate}
           </p>
-          <span className="flex flex-row gap-2">
-            {tags.length > 0 && (
+          <span className="flex flex-row items-center gap-2">
+            {/* Render visible tags */}
+            {visibleTags.map((tag) => (
+              <Tag key={tag}>{tag}</Tag>
+            ))}
+
+            {/* Conditionally render the +X badge only if there are hidden tags */}
+            {hiddenCount > 0 && (
               <Tag>
-                <TagsIcon class="size-3" />
-                {tags.length}
+                <span className="flex flex-row items-center gap-1">
+                  <PlusIcon class="size-3" />
+                  {hiddenCount}
+                </span>
               </Tag>
             )}
           </span>
