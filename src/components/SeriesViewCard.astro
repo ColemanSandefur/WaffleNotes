@@ -1,6 +1,8 @@
 ---
-import Image from "astro/components/Image.astro";
+import { BookOpenTextIcon } from "@lucide/astro";
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
+import SeriesPartBadge from "./SeriesPartBadge.astro";
 
 interface Props {
   series: CollectionEntry<"series">;
@@ -34,7 +36,7 @@ const formattedDate = latestPost?.data.pubDate.toLocaleDateString("en-US", {
     />
   </div>
   <div class="flex flex-col gap-2 grow flex-1">
-    <div class="flex flex-row items-center gap-2">
+    <div class="flex flex-row items-center gap-2 justify-between">
       {
         formattedDate ? (
           <p class="text-xs font-mono text-primary font-light uppercase">
@@ -46,17 +48,7 @@ const formattedDate = latestPost?.data.pubDate.toLocaleDateString("en-US", {
           </p>
         )
       }
-      {
-        numPosts > 0 ? (
-          <p class="bg-primary text-primary-foreground font-mono text-xs py-1 px-3 uppercase rounded-sm ml-auto">
-            {numPosts} Parts
-          </p>
-        ) : (
-          <p class="border border-border font-mono text-xs py-1 px-3 uppercase rounded-sm ml-auto">
-            Empty
-          </p>
-        )
-      }
+      <SeriesPartBadge size="sm" numPosts={numPosts} />
     </div>
     <p class="font-serif text-lg text-primary">{title}</p>
     <p class="text-sm text-muted-foreground line-clamp-2">
