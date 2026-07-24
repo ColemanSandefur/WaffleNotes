@@ -1,5 +1,6 @@
 ---
-import Image from "astro/components/Image.astro";
+import { ArrowRightIcon } from "@lucide/astro";
+import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 
 interface Props {
@@ -33,6 +34,7 @@ const formattedDate = pubDate.toLocaleDateString("en-US", {
   <p class="text-sm text-foreground/70">{description}</p>
   <a
     href=`/posts/${postItem.id}`
-    class="text-sm text-primary font-mono underline">Read More →</a
-  >
+    class="text-sm text-primary font-mono underline flex flex-row items-center gap-2"
+    >Read More <ArrowRightIcon class="size-3" />
+  </a>
 </div>
