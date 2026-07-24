@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import type { ComponentChildren } from "preact";
+import { cloneElement, isValidElement } from "preact";
+import type { ComponentChildren, HTMLAttributes, VNode } from "preact";
 
 const tagVariants = cva(
   "font-mono text-xs py-1 px-3 uppercase rounded-sm flex flex-row items-center gap-2",
@@ -24,12 +25,37 @@ const tagVariants = cva(
   },
 );
 
-export interface TagProps extends VariantProps<typeof tagVariants> {
+export interface TagProps
+  extends HTMLAttributes<HTMLElement>, VariantProps<typeof tagVariants> {
+  asChild?: boolean;
   className?: string;
   children?: ComponentChildren;
 }
 
-export default function Tag({ variant, size, children, className }: TagProps) {
+export default function Tag({
+  variant,
+  size,
+  asChild = false,
+  children,
+  className,
+  ...props
+}: TagProps) {
   const style = tagVariants({ variant, size });
-  return <p className={cn(style, className)}>{children}</p>;
+  const combinedClassName = cn(style, className);
+
+  if (asChild && isValidElement(children)) {
+    return cloneElement(children as VNode<any>, {
+      ...props,
+      className: cn(combinedClassName, (children.props as any)?.className),
+    });
+  }
+
+  return (
+    <p
+      className={combinedClassName}
+      {...(props as HTMLAttributes<HTMLParagraphElement>)}
+    >
+      {children}
+    </p>
+  );
 }
