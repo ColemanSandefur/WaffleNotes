@@ -1,8 +1,20 @@
 ---
 import ContentSection from "@/components/ContentSection.astro";
 import PostCard from "@/components/PostCard.astro";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/preact/Empty";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { FileTextIcon, SquareDashedTextIcon } from "@lucide/astro";
+import {
+  FileTextIcon,
+  FileXCornerIcon,
+  SquareDashedTextIcon,
+} from "@lucide/astro";
+import type from "@lucide/astro/icons/type";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
@@ -53,17 +65,17 @@ const morePosts = posts.slice(1, 10);
               </div>
             </Fragment>
           ) : (
-            <div class="flex flex-col justify-center items-center border border-border rounded-md px-4 py-16 gap-4">
-              <div class="size-10 aspect-square rounded-md border border-border text-primary bg-primary-foreground/50 flex justify-center items-center text-2xl">
-                <FileTextIcon />
-              </div>
-              <p class="font-serif text-primary text-lg">
-                No posts were found...
-              </p>
-              <p class="text-muted-foreground">
-                Please check back later to see some reflections.
-              </p>
-            </div>
+            <Empty className="border border-dashed py-16">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FileTextIcon />
+                </EmptyMedia>
+                <EmptyTitle>No posts were found...</EmptyTitle>
+                <EmptyDescription>
+                  Please check back later to see some reflections.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           )
         }
       </div>
@@ -91,16 +103,22 @@ const morePosts = posts.slice(1, 10);
             <>
               {/* Blurred skeleton/placeholder cards */}
               {Array.from({ length: 6 }, () => (
-                <div class="min-h-48 bg-muted rounded-md select-none pointer-events-none border border-border" />
+                <div class="min-h-48 bg-muted rounded-md select-none pointer-events-none" />
               ))}
 
               {/* Centered overlay message */}
               <div class="absolute inset-0 flex items-center justify-center z-10">
-                <div class="bg-background px-6 py-3 rounded-sm shadow-lg border border-border">
-                  <span class="text-xl font-serif text-primary">
-                    More posts are on the way!
-                  </span>
-                </div>
+                <Empty className="border border-dashed py-16 w-fit max-w-md bg-background">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <FileTextIcon />
+                    </EmptyMedia>
+                    <EmptyTitle>More posts are coming soon...</EmptyTitle>
+                    <EmptyDescription>
+                      Please check back later to see some more reflections.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
               </div>
             </>
           ) : null

@@ -10,6 +10,13 @@ import {
 } from "lucide-preact";
 import Tag from "./Tag";
 import { cn } from "@/lib/utils";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "./Empty";
 
 export interface OptimizedImage {
   src: string;
@@ -232,32 +239,36 @@ export default function ArchiveSearch({
       </div>
 
       {items.length === 0 && (
-        <div class="flex flex-col justify-center items-center border border-border border-dashed rounded-md px-4 py-16 gap-4">
-          <div class="size-10 aspect-square rounded-md border border-border text-primary bg-primary-foreground/50 flex justify-center items-center text-2xl">
-            <FileTextIcon />
-          </div>
-          <p class="font-serif text-primary text-lg">
-            No {type === "post" ? "posts" : "series"} are available
-          </p>
-          <p class="text-muted-foreground">
-            Please check back later to see some reflections.
-          </p>
-        </div>
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileTextIcon />
+            </EmptyMedia>
+            <EmptyTitle>
+              No {type === "post" ? "posts" : "series"} are available
+            </EmptyTitle>
+            <EmptyDescription>
+              Please check back later to see some reflections.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
 
       {items.length > 0 && filteredItems.length === 0 && (
-        <div class="flex flex-col justify-center items-center border border-border border-dashed rounded-md px-4 py-16 gap-4">
-          <div class="size-10 aspect-square rounded-md border border-border text-primary bg-primary-foreground/50 flex justify-center items-center text-2xl">
-            <FileXCornerIcon />
-          </div>
-          <p class="font-serif text-primary text-lg text-center">
-            No matching {type === "post" ? "posts" : "series"} found.
-          </p>
-          <p class="text-muted-foreground text-center">
-            Consider changing your search filters to find what you're looking
-            for.
-          </p>
-        </div>
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileXCornerIcon />
+            </EmptyMedia>
+            <EmptyTitle>
+              No matching {type === "post" ? "posts" : "series"} found.
+            </EmptyTitle>
+            <EmptyDescription>
+              Consider changing your search filters to find what you're looking
+              for.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
 
       {/* Pagination Controls */}
