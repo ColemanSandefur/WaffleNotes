@@ -1,7 +1,20 @@
 ---
 import ContentSection from "@/components/ContentSection.astro";
 import PostCard from "@/components/PostCard.astro";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/preact/Empty";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+  FileTextIcon,
+  FileXCornerIcon,
+  SquareDashedTextIcon,
+} from "@lucide/astro";
+import type from "@lucide/astro/icons/type";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 
@@ -26,28 +39,45 @@ const morePosts = posts.slice(1, 10);
         <p class="text-end font-mono text-primary font-light text-sm">
           Latest post
         </p>
-        <Image
-          src={firstPost.data.coverImage}
-          alt={firstPost.data.title}
-          width={1200}
-          height={675}
-          sizes="(min-width: 768px) 80vw, 100vw"
-          class="md:col-span-1 rounded-xl"
-          loading="eager"
-        />
-        <div class="flex flex-col gap-4">
-          <h1 class="font-serif text-4xl text-primary">
-            {firstPost.data.title}
-          </h1>
-          <p class="text-foreground/70">
-            {firstPost.data.description}
-          </p>
-          <a
-            href={`/posts/${firstPost.id}`}
-            class="col-start-3 underline font-mono text-primary"
-            >Read Full Post</a
-          >
-        </div>
+        {
+          firstPost ? (
+            <Fragment>
+              <Image
+                src={firstPost.data.coverImage}
+                alt={firstPost.data.title}
+                width={1200}
+                height={675}
+                sizes="(min-width: 768px) 80vw, 100vw"
+                class="md:col-span-1 rounded-xl"
+                loading="eager"
+              />
+              <div class="flex flex-col gap-4">
+                <h1 class="font-serif text-4xl text-primary">
+                  {firstPost.data.title}
+                </h1>
+                <p class="text-foreground/70">{firstPost.data.description}</p>
+                <a
+                  href={`/posts/${firstPost.id}`}
+                  class="col-start-3 underline font-mono text-primary"
+                >
+                  Read Full Post
+                </a>
+              </div>
+            </Fragment>
+          ) : (
+            <Empty className="border border-dashed py-16">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <FileTextIcon />
+                </EmptyMedia>
+                <EmptyTitle>No posts were found...</EmptyTitle>
+                <EmptyDescription>
+                  Please check back later to see some reflections.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )
+        }
       </div>
 
       <div
@@ -63,8 +93,36 @@ const morePosts = posts.slice(1, 10);
     <div class="w-full max-w-5xl">
       <h2 class="text-2xl text-primary">Recent Entries</h2>
       <span class="block w-8 border-b-[1.5px] border-primary"></span>
-      <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-8">
+      <div
+        class="relative grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-8"
+      >
         {morePosts.map((post) => <PostCard post={post} />)}
+
+        {
+          morePosts.length === 0 ? (
+            <>
+              {/* Blurred skeleton/placeholder cards */}
+              {Array.from({ length: 6 }, () => (
+                <div class="min-h-48 bg-muted rounded-md select-none pointer-events-none" />
+              ))}
+
+              {/* Centered overlay message */}
+              <div class="absolute inset-0 flex items-center justify-center z-10">
+                <Empty className="border border-dashed py-16 w-fit max-w-md bg-background">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <FileTextIcon />
+                    </EmptyMedia>
+                    <EmptyTitle>More posts are coming soon...</EmptyTitle>
+                    <EmptyDescription>
+                      Please check back later to see some more reflections.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              </div>
+            </>
+          ) : null
+        }
       </div>
     </div>
   </div>

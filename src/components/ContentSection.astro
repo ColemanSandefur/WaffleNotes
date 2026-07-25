@@ -1,5 +1,31 @@
-<div class="flex flex-col items-center p-4">
-  <div class="w-full max-w-2xl">
+---
+import type { HTMLAttributes } from "astro/types";
+import { cva, type VariantProps } from "class-variance-authority";
+
+const sectionVariants = cva("flex flex-col items-center px-4", {
+  variants: {
+    width: {
+      sm: "[&>div]:max-w-xl",
+      default: "[&>div]:max-w-2xl",
+      lg: "[&>div]:max-w-4xl",
+      xl: "[&>div]:max-w-6xl",
+      full: "[&>div]:max-w-full",
+    },
+  },
+  defaultVariants: {
+    width: "default",
+  },
+});
+
+// Combine HTML attributes with CVA variant props
+interface Props
+  extends HTMLAttributes<"div">, VariantProps<typeof sectionVariants> {}
+
+const { class: className, width, ...rest } = Astro.props;
+---
+
+<div class={sectionVariants({ width, className })} {...rest}>
+  <div class="w-full">
     <slot />
   </div>
 </div>

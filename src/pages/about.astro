@@ -1,16 +1,42 @@
 ---
+import * as aboutPost from "@/content/pages/about.md";
 import ContentSection from "@/components/ContentSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/preact/Empty";
+import { FileTextIcon } from "@lucide/astro";
 
-import * as aboutPost from "@/content/pages/about.md";
-const compiled = await aboutPost.compiledContent();
+const Content = aboutPost.Content;
+const raw = await aboutPost.rawContent();
+const isEmpty = !raw || raw.trim().length === 0;
 const { title, description } = aboutPost.frontmatter;
 ---
 
 <BaseLayout title={title} description={description}>
-  <ContentSection>
-    <div class="prose prose-themed post-content mt-12">
-      <Fragment set:html={compiled} />
-    </div>
+  <ContentSection class="mt-12">
+    {
+      !isEmpty ? (
+        <div class="prose prose-themed post-content">
+          <Content />
+        </div>
+      ) : (
+        <Empty className="border border-dashed py-16">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileTextIcon />
+            </EmptyMedia>
+            <EmptyTitle>Coming Soon...</EmptyTitle>
+            <EmptyDescription>
+              This content is currently being written. Please check back later.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )
+    }
   </ContentSection>
 </BaseLayout>

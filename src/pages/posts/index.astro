@@ -6,6 +6,11 @@ import ArchiveSearch, {
 } from "@/components/preact/ArchiveSearch";
 import { getCollection } from "astro:content";
 import { getImage } from "astro:assets";
+import {
+  PageDescription,
+  PageHeader,
+  PageTitle,
+} from "@/components/preact/PageTitle";
 
 const posts = await getCollection(
   "post",
@@ -46,12 +51,12 @@ const searchItems = await Promise.all(
   description="A collection of reflections, essays, and other study notes from WaffleNotes."
 >
   <ContentSection>
-    <h1 class="text-4xl font-serif font-bold text-primary mt-12">
-      The Archive
-    </h1>
-    <p class="pt-4 text-muted-foreground">
-      A collection of reflections, essays, and other writings.
-    </p>
+    <PageHeader>
+      <PageTitle>The Archive</PageTitle>
+      <PageDescription>
+        A collection of reflections, essays, and other writings.
+      </PageDescription>
+    </PageHeader>
 
     <ArchiveSearch client:load items={searchItems} type="post" />
   </ContentSection>

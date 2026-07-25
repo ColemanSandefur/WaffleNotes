@@ -2,9 +2,21 @@ import { useState, useMemo } from "preact/hooks";
 import Fuse from "fuse.js";
 import ArchivePostCard from "./ArchivePostCard";
 import ArchiveSeriesCard from "./ArchiveSeriesCard";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-preact";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  FileTextIcon,
+  FileXCornerIcon,
+} from "lucide-preact";
 import Tag from "./Tag";
 import { cn } from "@/lib/utils";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "./Empty";
 
 export interface OptimizedImage {
   src: string;
@@ -226,10 +238,37 @@ export default function ArchiveSearch({
         ))}
       </div>
 
-      {filteredItems.length === 0 && (
-        <p className="text-muted-foreground font-mono text-center py-12">
-          No matching {type === "post" ? "posts" : "series"} found.
-        </p>
+      {items.length === 0 && (
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileTextIcon />
+            </EmptyMedia>
+            <EmptyTitle>
+              No {type === "post" ? "posts" : "series"} are available
+            </EmptyTitle>
+            <EmptyDescription>
+              Please check back later to see some reflections.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
+
+      {items.length > 0 && filteredItems.length === 0 && (
+        <Empty className="border border-dashed">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileXCornerIcon />
+            </EmptyMedia>
+            <EmptyTitle>
+              No matching {type === "post" ? "posts" : "series"} found.
+            </EmptyTitle>
+            <EmptyDescription>
+              Consider changing your search filters to find what you're looking
+              for.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
 
       {/* Pagination Controls */}
