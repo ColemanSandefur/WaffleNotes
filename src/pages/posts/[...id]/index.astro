@@ -6,10 +6,18 @@ import type { CollectionEntry } from "astro:content";
 import { getCollection, getEntry, render } from "astro:content";
 import { Image } from "astro:assets";
 import type { InferEntrySchema } from "astro:content";
-import { ArrowRightIcon, BookOpenTextIcon, FileTextIcon, TagsIcon } from "@lucide/astro";
+import { FileTextIcon } from "@lucide/astro";
 import Tag from "@/components/preact/Tag";
 import { cn } from "@/lib/utils";
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/preact/Empty";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/preact/Empty";
+import { SeriesReference } from "@/components/preact/SeriesReference";
+import { DotsSeparator } from "@/components/preact/DotsSeparator";
 
 interface Props {
   post: CollectionEntry<"post">;
@@ -86,11 +94,13 @@ const tags = post.data.tags;
 
     <div
       class="absolute inset-0 -z-10 bg-linear-to-b from-transparent via-background/10 to-background/90"
-    />
+    >
+    </div>
 
     <div
       class="background-gradient absolute inset-x-0 bottom-0 h-2/3 backdrop-blur-lg bg-background/70"
-    />
+    >
+    </div>
 
     <div class="relative z-10 w-full flex flex-col justify-end pb-6">
       <ContentSection>
@@ -141,82 +151,56 @@ const tags = post.data.tags;
   </section>
 
   <ContentSection class="mt-6">
-    {
-      (series || audioUrl) && (
-        <Fragment>
-          <div class="flex flex-col gap-2">
-            {
-              series && (
-                <div class="p-2 flex flex-col sm:flex-row gap-2 gap-y-4 rounded-sm border border-border">
-                  <div class="flex flex-row gap-2">
-                    <div class="size-10 aspect-square rounded-md bg-primary text-primary-foreground flex justify-center items-center text-2xl">
-                      <BookOpenTextIcon />
-                    </div>
-                    <div class="flex flex-col">
-                      <span class="font-mono text-xs text-muted-foreground">
-                        This lesson is part of a series:
-                      </span>
-                      <p class="font-serif text-base text-primary">{series.title}</p>
-                    </div>
-                  </div>
-                  <div class="flex flex-col ml-auto justify-center w-full sm:w-fit">
-                    <a
-                      href=`/series/${seriesObj.id}`
-                      class="bg-primary text-primary-foreground rounded-md grow-0 py-2 px-3 text-sm sm:w-fit flex flex-row items-center justify-center sm:justify-start"
-                    >
-                      View Series
-                      <ArrowRightIcon class="size-4 ml-2"/>
-                    </a>
-                  </div>
-                </div>
-              )
-            }
-            {
-              audioUrl && (
-                <AudioComponent client:load src={audioUrl} />
-              )
-            }
-          </div>
-          <div class="flex flex-row justify-center gap-8 text-sm text-primary my-8">
-            <span>•</span>
-            <span>•</span>
-            <span>•</span>
-          </div>
-        </Fragment>
-      )
-    }
-    <div class={cn("mt-8", {"prose prose-themed post-content": !isEmpty})}>
+    <div class="flex flex-col gap-2">
+      {series && <SeriesReference seriesId={seriesObj.id} series={series} />}
+      {audioUrl && <AudioComponent client:load src={audioUrl} />}
+    </div>
+    {(series || audioUrl) && <DotsSeparator className="my-8" />}
+    <div class="mt-8 prose prose-themed post-content">
       {
         !isEmpty ? (
           <Content />
         ) : (
-          <Empty className="border border-dashed py-16">
+          <Empty className="border border-dashed py-16 not-prose">
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <FileTextIcon />
               </EmptyMedia>
               <EmptyTitle>Coming Soon...</EmptyTitle>
               <EmptyDescription>
-                This content is currently being written. Please check back later.
+                This content is currently being written. Please check back
+                later.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
         )
       }
     </div>
-    {tags.length > 0 && (
-      <div class="border-border border-t flex flex-row gap-4 pt-8 mt-16">
-        <div class="flex flex-row flex-wrap gap-2">
-          {tags.map((tag) => (<Tag className="text-primary">{tag}</Tag>))}
+    {
+      tags.length > 0 && (
+        <div class="border-border border-t flex flex-row gap-4 pt-8 mt-16">
+          <div class="flex flex-row flex-wrap gap-2">
+            {tags.map((tag) => (
+              <Tag className="text-primary">{tag}</Tag>
+            ))}
+          </div>
         </div>
-      </div>
-    )}
+      )
+    }
   </ContentSection>
 </BaseLayout>
 
 <style>
   .background-gradient {
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
+    mask-image: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
 </style>

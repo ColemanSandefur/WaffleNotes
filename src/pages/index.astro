@@ -1,6 +1,7 @@
 ---
 import ContentSection from "@/components/ContentSection.astro";
 import PostCard from "@/components/PostCard.astro";
+import { DotsSeparator } from "@/components/preact/DotsSeparator";
 import {
   Empty,
   EmptyDescription,
@@ -80,13 +81,7 @@ const morePosts = posts.slice(1, 10);
         }
       </div>
 
-      <div
-        class="flex flex-row justify-center gap-8 text-sm text-primary my-16"
-      >
-        <span>•</span>
-        <span>•</span>
-        <span>•</span>
-      </div>
+      <DotsSeparator className="my-16" />
     </div>
   </div>
   <div class="flex flex-col items-center p-4">

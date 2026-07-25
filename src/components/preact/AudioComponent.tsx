@@ -1,5 +1,6 @@
 import { PauseIcon, PlayIcon } from "lucide-preact";
 import { useEffect, useRef, useState } from "preact/hooks";
+import { ItemCard, ItemCardContent, ItemCardDescription, ItemCardMedia, ItemCardTitle } from "./ItemCard";
 
 export interface AudioComponentProps {
   src: string;
@@ -47,24 +48,20 @@ export default function AudioComponent({ src }: AudioComponentProps) {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div class="audio-player p-2 flex flex-row gap-2 gap-y-4 rounded-sm border border-border">
-      <button
-        type="button"
-        class="play-btn size-10 bg-primary text-primary-foreground rounded-md flex items-center justify-center text-2xl"
-        onClick={() => setIsPlaying(!isPlaying)}
-      >
-        {isPlaying ? <PauseIcon /> : <PlayIcon />}
-      </button>
-
-      <div class="flex flex-col grow gap-2">
-        <div class="flex justify-between items-center font-mono text-xs text-muted-foreground">
-          <span>Listen to Sermon</span>
-          <span class="time-display">
+    <ItemCard>
+      <ItemCardMedia variant="icon" className="cursor-pointer" asChild>
+        <button type="button" onClick={() => setIsPlaying(!isPlaying)}>
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </button>
+      </ItemCardMedia>
+      <ItemCardContent>
+        <ItemCardTitle className="flex flex-row justify-between">
+          Listen to this post
+          <span>
             {formatTime(currentTime)} / {formatTime(duration)}
           </span>
-        </div>
-
-        <div class="flex items-center justify-center grow">
+        </ItemCardTitle>
+        <ItemCardDescription>
           <input
             type="range"
             class="progress-bar w-full h-1 rounded-full appearance-none cursor-pointer accent-secondary-foreground"
@@ -82,9 +79,8 @@ export default function AudioComponent({ src }: AudioComponentProps) {
               }
             }}
           />
-        </div>
-      </div>
-
+        </ItemCardDescription>
+      </ItemCardContent>
       <audio
         ref={audioRef}
         src={src}
@@ -93,6 +89,6 @@ export default function AudioComponent({ src }: AudioComponentProps) {
         onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
         onEnded={() => setIsPlaying(false)}
       />
-    </div>
+    </ItemCard>
   );
 }

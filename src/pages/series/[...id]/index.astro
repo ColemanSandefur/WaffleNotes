@@ -22,6 +22,7 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/components/preact/Empty";
+import { DotsSeparator } from "@/components/preact/DotsSeparator";
 
 interface Props {
   series: CollectionEntry<"series">;
@@ -91,11 +92,9 @@ const searchItems = await Promise.all(
     <div class="prose prose-themed post-content mt-8">
       <Content />
     </div>
-    <div class="flex flex-row justify-center gap-8 text-sm text-primary my-8">
-      <span>•</span>
-      <span>•</span>
-      <span>•</span>
-    </div>
+
+    <DotsSeparator className="my-8" />
+
     <h2 class="text-2xl text-primary">Lesson Entries</h2>
     <span class="block w-8 border-b-[1.5px] border-primary"></span>
     <div class="flex flex-col gap-4 mt-8">
