@@ -140,11 +140,11 @@ const tags = post.data.tags;
     </div>
   </section>
 
-  <ContentSection>
+  <ContentSection class="mt-6">
     {
       (series || audioUrl) && (
         <Fragment>
-          <div class="flex flex-col gap-2 mt-2">
+          <div class="flex flex-col gap-2">
             {
               series && (
                 <div class="p-2 flex flex-col sm:flex-row gap-2 gap-y-4 rounded-sm border border-border">
@@ -185,7 +185,7 @@ const tags = post.data.tags;
         </Fragment>
       )
     }
-    <div class={cn("mt-12", {"prose prose-themed post-content": !isEmpty})}>
+    <div class={cn("mt-8", {"prose prose-themed post-content": !isEmpty})}>
       {
         !isEmpty ? (
           <Content />
