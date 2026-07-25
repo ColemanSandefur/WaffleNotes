@@ -15,6 +15,13 @@ import {
   PageHeader,
   PageTitle,
 } from "@/components/preact/PageTitle";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/preact/Empty";
 
 interface Props {
   series: CollectionEntry<"series">;
@@ -95,17 +102,17 @@ const searchItems = await Promise.all(
       {searchItems.map((post) => <ArchivePostCard {...post} />)}
       {
         posts.length === 0 && (
-          <div class="flex flex-col justify-center items-center border border-border rounded-md px-4 py-16 gap-4">
-            <div class="size-10 aspect-square rounded-md bg-primary text-primary-foreground flex justify-center items-center text-2xl">
-              <BookOpenTextIcon />
-            </div>
-            <p class="font-serif text-primary text-lg">
-              No lessons were found...
-            </p>
-            <p class="text-muted-foreground">
-              Please check back later to see the lessons for this series
-            </p>
-          </div>
+          <Empty className="border border-dashed py-16">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <BookOpenTextIcon />
+              </EmptyMedia>
+              <EmptyTitle>No lessons were found...</EmptyTitle>
+              <EmptyDescription>
+                Please check back later to see the lessons for this series
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         )
       }
     </div>
