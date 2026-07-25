@@ -10,6 +10,11 @@ import ArchivePostCard, {
 } from "@/components/preact/ArchivePostCard";
 import { BookOpenTextIcon } from "@lucide/astro";
 import SeriesPartBadge from "@/components/SeriesPartBadge.astro";
+import {
+  PageDescription,
+  PageHeader,
+  PageTitle,
+} from "@/components/preact/PageTitle";
 
 interface Props {
   series: CollectionEntry<"series">;
@@ -65,12 +70,13 @@ const searchItems = await Promise.all(
   type="article"
 >
   <ContentSection>
-    <h1 class="text-4xl font-serif font-bold text-primary mt-12">
-      {series.data.title}
-    </h1>
-    <p class="pt-4 text-muted-foreground">
-      {series.data.description}
-    </p>
+    <PageHeader>
+      <PageTitle>{series.data.title}</PageTitle>
+      <PageDescription>
+        {series.data.description}
+      </PageDescription>
+    </PageHeader>
+
     <div class="flex flex-row flex-wrap mt-4">
       <SeriesPartBadge size="sm" numPosts={posts.length} />
     </div>

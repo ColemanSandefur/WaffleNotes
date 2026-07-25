@@ -7,6 +7,11 @@ import * as seriesPost from "@/content/pages/series.md";
 import type { SeriesSearchItem } from "@/components/preact/ArchiveSearch";
 import ArchiveSearch from "@/components/preact/ArchiveSearch";
 import { getImage } from "astro:assets";
+import {
+  PageHeader,
+  PageTitle,
+  PageDescription,
+} from "@/components/preact/PageTitle";
 
 const compiled = await seriesPost.compiledContent();
 const { title, description } = seriesPost.frontmatter;
@@ -68,12 +73,12 @@ const searchItems = await Promise.all(
 
 <BaseLayout title={title} description={description}>
   <ContentSection>
-    <h1 class="text-4xl font-serif font-bold text-primary mt-12">
-      {title}
-    </h1>
-    <p class="pt-4 text-muted-foreground">
-      {description}
-    </p>
+    <PageHeader>
+      <PageTitle>{title}</PageTitle>
+      <PageDescription>
+        {description}
+      </PageDescription>
+    </PageHeader>
 
     {
       compiled && (

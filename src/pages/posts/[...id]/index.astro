@@ -86,75 +86,57 @@ const tags = post.data.tags;
 
     <div
       class="absolute inset-0 -z-10 bg-linear-to-b from-transparent via-background/10 to-background/90"
-    >
-    </div>
+    />
 
     <div
-      class="absolute inset-x-0 bottom-0 h-2/3 backdrop-blur-lg bg-background/30"
-      style={`
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-    `}
-    >
-    </div>
+      class="background-gradient absolute inset-x-0 bottom-0 h-2/3 backdrop-blur-lg bg-background/70"
+    />
 
-    <div
-      class="absolute inset-x-0 bottom-0 h-2/3 backdrop-blur-md bg-background/30"
-      style={`
-      -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-      mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
-    `}
-    >
-    </div>
-
-    <div class="relative z-10 w-full flex flex-col justify-end pb-2">
-      <div class="">
-        <ContentSection>
-          <div class="flex flex-col gap-4">
-            <div>
-              <h1 class="text-5xl text-foreground">
-                {post.data.title}
-              </h1>
-              <p class="mt-4 text-md text-foreground/70 italic">
-                {post.data.description}
-              </p>
+    <div class="relative z-10 w-full flex flex-col justify-end pb-6">
+      <ContentSection>
+        <div class="flex flex-col gap-4">
+          <div>
+            <h1 class="text-5xl text-foreground">
+              {post.data.title}
+            </h1>
+            <p class="mt-4 text-md text-foreground/70 italic">
+              {post.data.description}
+            </p>
+          </div>
+          <span class="block border-b border-b-foreground/25"></span>
+          <div class="flex flex-row text-foreground/80 gap-2">
+            <div
+              class="size-10 flex-none aspect-square bg-primary text-primary-foreground rounded-md flex justify-center items-center font-mono text-2xl"
+            >
+              {
+                authorImage ? (
+                  <Image
+                    src={authorImage}
+                    alt={authorName}
+                    width={120}
+                    height={120}
+                    class="rounded-md object-cover"
+                  />
+                ) : (
+                  <p class="leading-none m-0">{authorInitials}</p>
+                )
+              }
             </div>
-            <span class="block border-b border-b-foreground/25"></span>
-            <div class="flex flex-row text-foreground/80 gap-2">
-              <!-- Replace your current initials div with this -->
-              <div
-                class="size-10 flex-none aspect-square bg-primary text-primary-foreground rounded-md flex justify-center items-center font-mono text-2xl"
+            <div class="flex flex-col">
+              <span class="font-mono uppercase text-xs text-primary"
+                >Written by</span
               >
-                {
-                  authorImage ? (
-                    <Image
-                      src={authorImage}
-                      alt={authorName}
-                      width={120}
-                      height={120}
-                      class="rounded-md object-cover"
-                    />
-                  ) : (
-                    <p class="leading-none m-0">{authorInitials}</p>
-                  )
-                }
-              </div>
-              <div class="flex flex-col">
-                <span class="font-mono uppercase text-xs text-primary"
-                  >Written by</span
-                >
-                <p class="">{authorName}</p>
-              </div>
-              <div class="flex flex-col ml-auto text-right">
-                <span class="font-mono uppercase text-xs text-primary"
-                  >Published</span
-                >
-                <p class="">{post.data.pubDate.toDateString()}</p>
-              </div>
+              <p class="">{authorName}</p>
+            </div>
+            <div class="flex flex-col ml-auto text-right">
+              <span class="font-mono uppercase text-xs text-primary"
+                >Published</span
+              >
+              <p class="">{post.data.pubDate.toDateString()}</p>
             </div>
           </div>
-        </ContentSection>
-      </div>
+        </div>
+      </ContentSection>
     </div>
   </section>
 
@@ -203,7 +185,7 @@ const tags = post.data.tags;
         </Fragment>
       )
     }
-    <div class={cn("mt-8", {"prose prose-themed post-content": !isEmpty})}>
+    <div class={cn("mt-12", {"prose prose-themed post-content": !isEmpty})}>
       {
         !isEmpty ? (
           <Content />
@@ -231,3 +213,10 @@ const tags = post.data.tags;
     )}
   </ContentSection>
 </BaseLayout>
+
+<style>
+  .background-gradient {
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 100%);
+  }
+</style>
