@@ -10,13 +10,19 @@ import {
   EmptyTitle,
 } from "@/components/preact/Empty";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { ArrowRightIcon, BookOpenTextIcon, FileTextIcon } from "@lucide/astro";
+import {
+  ArrowRightIcon,
+  BookOpenTextIcon,
+  FileTextIcon,
+  PlusIcon,
+} from "@lucide/astro";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
 import { SeriesUtils } from "@/lib/series";
 import { formatDate } from "@/lib/utils";
 import type { CollectionEntry } from "astro:content";
 import SeriesPartBadge from "@/components/SeriesPartBadge.astro";
+import Tag from "@/components/preact/Tag";
 
 const posts = await getCollection(
   "post",
@@ -48,6 +54,10 @@ series.sort(
     (latestBySeries[b.id]?.data.pubDate.valueOf() ?? 0) -
     (latestBySeries[a.id]?.data.pubDate.valueOf() ?? 0),
 );
+
+const MAX_VISIBLE_TAGS = 1;
+const visibleTags = firstPost.data.tags.slice(0, MAX_VISIBLE_TAGS);
+const hiddenCount = firstPost.data.tags.length - MAX_VISIBLE_TAGS;
 ---
 
 <BaseLayout
@@ -73,6 +83,27 @@ series.sort(
             <h1 class="font-serif text-4xl text-primary">
               {firstPost.data.title}
             </h1>
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-xs font-mono text-primary font-light uppercase">
+                {formatDate(firstPost.data.pubDate)}
+              </p>
+              <span class="flex flex-row items-center gap-2">
+                {/* Render visible tags */}
+                {visibleTags.map((tag) => (
+                  <Tag>{tag}</Tag>
+                ))}
+
+                {/* Conditionally render the +X badge only if there are hidden tags */}
+                {hiddenCount > 0 && (
+                  <Tag>
+                    <span class="flex flex-row items-center gap-1">
+                      <PlusIcon class="size-3" />
+                      {hiddenCount}
+                    </span>
+                  </Tag>
+                )}
+              </span>
+            </div>
             <p class="text-foreground/70">{firstPost.data.description}</p>
             <a
               href={`/posts/${firstPost.id}`}
@@ -103,7 +134,7 @@ series.sort(
     <span class="block w-8 border-b-[1.5px] border-primary"></span>
 
     <div
-      class="relative grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-8"
+      class="relative grid sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 mt-8"
     >
       {morePosts.map((post) => <PostCard post={post} />)}
 
@@ -192,6 +223,23 @@ series.sort(
               </div>
             );
           })
+        }
+        {
+          series.length === 0 && (
+            <Empty className="border border-dashed py-16 col-span-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <BookOpenTextIcon />
+                </EmptyMedia>
+                <EmptyTitle className="text-secondary-foreground">
+                  Series are coming soon
+                </EmptyTitle>
+                <EmptyDescription className="text-secondary-foreground/80">
+                  Please check back later to see new series
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )
         }
       </div>
       <div class="mt-8 flex flex-row justify-center">
