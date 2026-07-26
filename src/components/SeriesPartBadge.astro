@@ -1,12 +1,11 @@
 ---
-import SeriesPartBadge from "./preact/SeriesPartBadge";
+import SeriesPartBadge, {
+  type SeriesPartBadgeProps,
+} from "./preact/SeriesPartBadge";
 
-interface Props {
-  numPosts: number;
-  size: "sm";
-}
+interface Props extends SeriesPartBadgeProps {}
 
-const { numPosts, size } = Astro.props;
+const props = Astro.props;
 ---
 
-<SeriesPartBadge numPosts={numPosts} size={size} />
+<SeriesPartBadge {...props} />

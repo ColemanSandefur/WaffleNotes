@@ -1,6 +1,7 @@
 import { PlusIcon, TagsIcon } from "lucide-preact";
 import type { OptimizedImage } from "./ArchiveSearch";
 import Tag from "./Tag";
+import { cn } from "@/lib/utils";
 
 export interface ArchivePostCardProps {
   id: string;
@@ -9,6 +10,7 @@ export interface ArchivePostCardProps {
   coverImage: OptimizedImage;
   pubDate: number | string | Date;
   tags?: string[];
+  className?: string;
 }
 
 export default function ArchivePostCard({
@@ -18,6 +20,7 @@ export default function ArchivePostCard({
   coverImage,
   pubDate,
   tags = [],
+  className,
 }: ArchivePostCardProps) {
   const dateObj = new Date(pubDate);
   const formattedDate = dateObj.toLocaleDateString("en-US", {
@@ -34,7 +37,7 @@ export default function ArchivePostCard({
   return (
     <a
       href={`/posts/${id}`}
-      className="border border-border p-4 flex flex-col sm:flex-row gap-4 rounded-sm hover:bg-border/30 transition duration-200 ease-in-out hover:shadow-md"
+      className={cn("border border-border p-4 flex flex-col sm:flex-row gap-4 rounded-sm hover:bg-border/30 transition duration-200 ease-in-out hover:shadow-md bg-background", className)}
     >
       <div className="flex sm:h-26 aspect-video overflow-hidden rounded-md">
         <img
