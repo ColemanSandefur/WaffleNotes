@@ -112,7 +112,7 @@ const searchItems = await Promise.all(
       </div>
       <DotsSeparator className="my-8 lg:hidden" />
       <div
-        class="flex-1 bg-secondary text-secondary-foreground p-4 md:rounded-sm md:mx-4 lg:ml-0 lg:mr-4"
+        class="flex-1 h-fit bg-secondary text-secondary-foreground p-4 md:rounded-sm md:mx-4 lg:ml-0 lg:mr-4"
       >
         <h2 class="text-2xl">Lesson Entries</h2>
         <span class="block w-8 border-b-[1.5px] border-secondary-foreground"
@@ -133,8 +133,10 @@ const searchItems = await Promise.all(
                   <EmptyMedia variant="icon">
                     <BookOpenTextIcon />
                   </EmptyMedia>
-                  <EmptyTitle>No lessons were found...</EmptyTitle>
-                  <EmptyDescription>
+                  <EmptyTitle className="text-secondary-foreground">
+                    No lessons were found...
+                  </EmptyTitle>
+                  <EmptyDescription className="text-secondary-foreground/80">
                     Please check back later to see the lessons for this series
                   </EmptyDescription>
                 </EmptyHeader>
