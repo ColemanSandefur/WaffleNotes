@@ -1,7 +1,8 @@
 ---
-import { ArrowRightIcon } from "@lucide/astro";
+import { ArrowRightIcon, PlusIcon } from "@lucide/astro";
 import { Image } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
+import Tag from "./preact/Tag";
 
 interface Props {
   post: CollectionEntry<"post">;
@@ -9,12 +10,16 @@ interface Props {
 
 const postItem = Astro.props.post;
 const post = postItem.data;
-const { title, description, coverImage, pubDate } = post;
+const { title, description, coverImage, pubDate, tags } = post;
 const formattedDate = pubDate.toLocaleDateString("en-US", {
   month: "long",
   day: "numeric",
   year: "numeric",
 });
+
+const MAX_VISIBLE_TAGS = 1;
+const visibleTags = tags.slice(0, MAX_VISIBLE_TAGS);
+const hiddenCount = tags.length - MAX_VISIBLE_TAGS;
 ---
 
 <div class="flex flex-col gap-4">
@@ -27,9 +32,27 @@ const formattedDate = pubDate.toLocaleDateString("en-US", {
     class="aspect-video rounded-md"
     loading="lazy"
   />
-  <p class="text-xs font-mono text-primary font-light uppercase">
-    {formattedDate}
-  </p>
+  <div class="flex flex-row justify-between items-center">
+    <p class="text-xs font-mono text-primary font-light uppercase">
+      {formattedDate}
+    </p>
+    <span class="flex flex-row items-center gap-2">
+      {/* Render visible tags */}
+      {visibleTags.map((tag) => <Tag>{tag}</Tag>)}
+
+      {/* Conditionally render the +X badge only if there are hidden tags */}
+      {
+        hiddenCount > 0 && (
+          <Tag>
+            <span class="flex flex-row items-center gap-1">
+              <PlusIcon class="size-3" />
+              {hiddenCount}
+            </span>
+          </Tag>
+        )
+      }
+    </span>
+  </div>
   <p class="font-serif text-lg text-primary">{title}</p>
   <p class="text-sm text-foreground/70">{description}</p>
   <a

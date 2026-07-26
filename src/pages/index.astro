@@ -11,13 +11,18 @@ import {
 } from "@/components/preact/Empty";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import {
+  ArrowRightIcon,
+  BookOpenTextIcon,
   FileTextIcon,
-  FileXCornerIcon,
-  SquareDashedTextIcon,
+  PlusIcon,
 } from "@lucide/astro";
-import type from "@lucide/astro/icons/type";
 import { Image } from "astro:assets";
 import { getCollection } from "astro:content";
+import { SeriesUtils } from "@/lib/series";
+import { formatDate } from "@/lib/utils";
+import type { CollectionEntry } from "astro:content";
+import SeriesPartBadge from "@/components/SeriesPartBadge.astro";
+import Tag from "@/components/preact/Tag";
 
 const posts = await getCollection(
   "post",
@@ -26,8 +31,33 @@ const posts = await getCollection(
   value.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
 );
 
+const NUM_EXTRA_POSTS = 6;
+
 const firstPost = posts[0];
-const morePosts = posts.slice(1, 10);
+const morePosts = posts.slice(1, 1 + NUM_EXTRA_POSTS);
+
+const series = await getCollection(
+  "series",
+  (series) => series.data.draft === false,
+);
+
+const latestBySeries = series.reduce(
+  (acc, item) => {
+    acc[item.id] = SeriesUtils.getLatestPost(item, posts);
+    return acc;
+  },
+  {} as Record<string, CollectionEntry<"post"> | undefined>,
+);
+
+series.sort(
+  (a, b) =>
+    (latestBySeries[b.id]?.data.pubDate.valueOf() ?? 0) -
+    (latestBySeries[a.id]?.data.pubDate.valueOf() ?? 0),
+);
+
+const MAX_VISIBLE_TAGS = 1;
+const visibleTags = firstPost.data.tags.slice(0, MAX_VISIBLE_TAGS);
+const hiddenCount = firstPost.data.tags.length - MAX_VISIBLE_TAGS;
 ---
 
 <BaseLayout
@@ -53,6 +83,27 @@ const morePosts = posts.slice(1, 10);
             <h1 class="font-serif text-4xl text-primary">
               {firstPost.data.title}
             </h1>
+            <div class="flex flex-row justify-between items-center">
+              <p class="text-xs font-mono text-primary font-light uppercase">
+                {formatDate(firstPost.data.pubDate)}
+              </p>
+              <span class="flex flex-row items-center gap-2">
+                {/* Render visible tags */}
+                {visibleTags.map((tag) => (
+                  <Tag>{tag}</Tag>
+                ))}
+
+                {/* Conditionally render the +X badge only if there are hidden tags */}
+                {hiddenCount > 0 && (
+                  <Tag>
+                    <span class="flex flex-row items-center gap-1">
+                      <PlusIcon class="size-3" />
+                      {hiddenCount}
+                    </span>
+                  </Tag>
+                )}
+              </span>
+            </div>
             <p class="text-foreground/70">{firstPost.data.description}</p>
             <a
               href={`/posts/${firstPost.id}`}
@@ -83,7 +134,7 @@ const morePosts = posts.slice(1, 10);
     <span class="block w-8 border-b-[1.5px] border-primary"></span>
 
     <div
-      class="relative grid sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-8"
+      class="relative grid sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8 mt-8"
     >
       {morePosts.map((post) => <PostCard post={post} />)}
 
@@ -112,6 +163,95 @@ const morePosts = posts.slice(1, 10);
           </>
         ) : null
       }
+    </div>
+
+    <div class="mt-8 flex flex-row justify-center">
+      <a
+        href="/posts"
+        class="px-4 py-2 border border-border rounded-sm text-primary font-mono text-sm w-full sm:w-fit hover:bg-primary/10 flex flex-row justify-center items-center gap-2 transition duration-200 ease-in-out"
+      >
+        <FileTextIcon class="size-4" />
+        Explore More Posts
+        <ArrowRightIcon class="size-4" />
+      </a>
+    </div>
+
+    <DotsSeparator className="my-16" />
+  </ContentSection>
+
+  <ContentSection class="px-0">
+    <div class="bg-secondary text-secondary-foreground p-4 lg:rounded-sm">
+      <h2 class="text-2xl">Recent Series</h2>
+      <span class="block w-8 border-b-[1.5px] border-secondary-foreground"
+      ></span>
+
+      <div class="relative grid md:grid-cols-2 gap-4 mt-8">
+        {
+          series.slice(0, 2).map((series) => {
+            return (
+              <div class="flex flex-col bg-background rounded-sm border border-border p-6">
+                <Image
+                  src={series.data.coverImage}
+                  alt={series.data.title}
+                  class="aspect-video object-cover object-center rounded-md"
+                />
+                <span class="flex flex-row justify-between items-center mt-3">
+                  <p class="text-xs font-mono text-primary font-light uppercase">
+                    {latestBySeries[series.id]
+                      ? formatDate(latestBySeries[series.id]!.data.pubDate)
+                      : "Coming Soon..."}
+                  </p>
+                  <SeriesPartBadge
+                    size="sm"
+                    numPosts={SeriesUtils.getNumPosts(series, posts)}
+                    className="w-fit"
+                  />
+                </span>
+                <h2 class="font-serif text-primary text-xl mt-2">
+                  {series.data.title}
+                </h2>
+                <p class="text-base text-foreground/70 mt-1">
+                  {series.data.description}
+                </p>
+                <a
+                  href={`/series/${series.id}`}
+                  class="text-sm text-primary font-mono underline flex flex-row items-center gap-2 mt-4"
+                >
+                  View Series
+                  <ArrowRightIcon class="size-3" />
+                </a>
+              </div>
+            );
+          })
+        }
+        {
+          series.length === 0 && (
+            <Empty className="border border-dashed py-16 col-span-full">
+              <EmptyHeader>
+                <EmptyMedia variant="icon">
+                  <BookOpenTextIcon />
+                </EmptyMedia>
+                <EmptyTitle className="text-secondary-foreground">
+                  Series are coming soon
+                </EmptyTitle>
+                <EmptyDescription className="text-secondary-foreground/80">
+                  Please check back later to see new series
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          )
+        }
+      </div>
+      <div class="mt-8 flex flex-row justify-center">
+        <a
+          href="/series"
+          class="px-4 py-2 border border-border rounded-sm bg-secondary text-secondary-foreground font-mono text-sm w-full sm:w-fit hover:bg-secondary-foreground/10 flex flex-row justify-center items-center gap-2 transition duration-200 ease-in-out"
+        >
+          <BookOpenTextIcon class="size-4" />
+          Explore More Series
+          <ArrowRightIcon class="size-4" />
+        </a>
+      </div>
     </div>
   </ContentSection>
 </BaseLayout>
