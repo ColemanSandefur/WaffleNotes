@@ -84,12 +84,13 @@ const tags = post.data.tags;
   >
     <Image
       src={coverImage}
-      alt="Descriptive text"
+      alt=""
       width={1920}
       height={1080}
       sizes="100vw"
       class="absolute inset-0 -z-10 h-full w-full object-cover"
       loading="eager"
+      aria-hidden="true"
     />
 
     <div
@@ -103,7 +104,7 @@ const tags = post.data.tags;
     </div>
 
     <div class="relative z-10 w-full flex flex-col justify-end pb-6">
-      <ContentSection>
+      <ContentSection width="prose">
         <div class="flex flex-col gap-4">
           <div>
             <h1 class="text-5xl text-foreground">
@@ -150,7 +151,7 @@ const tags = post.data.tags;
     </div>
   </section>
 
-  <ContentSection class="mt-6">
+  <ContentSection width="prose" class="mt-6">
     <div class="flex flex-col gap-2">
       {series && <SeriesReference seriesId={seriesObj.id} series={series} />}
       {audioUrl && <AudioComponent client:load src={audioUrl} />}

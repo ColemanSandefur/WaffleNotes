@@ -10,6 +10,9 @@ import {
   EmptyTitle,
 } from "@/components/preact/Empty";
 import { FileTextIcon } from "@lucide/astro";
+import forestImage from "@/images/about.jpg";
+import { Image } from "astro:assets";
+import Hero from "@/components/Hero.astro";
 
 const Content = aboutPost.Content;
 const raw = await aboutPost.rawContent();
@@ -18,7 +21,13 @@ const { title, description } = aboutPost.frontmatter;
 ---
 
 <BaseLayout title={title} description={description}>
-  <ContentSection class="mt-12">
+  <Hero
+    eyebrow="Faithful Reflections"
+    title={title}
+    description={description}
+    image={forestImage}
+  />
+  <ContentSection width="prose" class="mt-12">
     {
       !isEmpty ? (
         <div class="prose prose-themed post-content">

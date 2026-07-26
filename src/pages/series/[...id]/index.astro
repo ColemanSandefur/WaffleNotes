@@ -2,9 +2,8 @@
 import ContentSection from "@/components/ContentSection.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { CollectionEntry } from "astro:content";
-import { getCollection, getEntry, render } from "astro:content";
+import { getCollection, render } from "astro:content";
 import { getImage, Image } from "astro:assets";
-import type { InferEntrySchema } from "astro:content";
 import ArchivePostCard, {
   type ArchivePostCardProps,
 } from "@/components/preact/ArchivePostCard";
@@ -23,6 +22,7 @@ import {
   EmptyDescription,
 } from "@/components/preact/Empty";
 import { DotsSeparator } from "@/components/preact/DotsSeparator";
+import Hero from "@/components/Hero.astro";
 
 interface Props {
   series: CollectionEntry<"series">;
@@ -76,44 +76,75 @@ const searchItems = await Promise.all(
   description={series.data.description}
   image={series.data.coverImage}
   type="article"
+  mainClass=""
 >
-  <ContentSection>
-    <PageHeader>
-      <PageTitle>{series.data.title}</PageTitle>
-      <PageDescription>
-        {series.data.description}
-      </PageDescription>
-    </PageHeader>
-
-    <div class="flex flex-row flex-wrap mt-4">
-      <SeriesPartBadge size="sm" numPosts={posts.length} />
+  <Hero
+    eyebrow="A Sequential Journey"
+    title={series.data.title}
+    description={series.data.description}
+    image={series.data.coverImage}
+  >
+    <div class="mt-8 flex flex-row flex-wrap justify-center">
+      <SeriesPartBadge
+        size="md"
+        numPosts={posts.length}
+        className={posts.length === 0 ? "bg-background" : ""}
+      />
     </div>
+  </Hero>
+  <ContentSection class="mt-0 pt-16 px-0 bg-background">
+    <div class="flex flex-col lg:flex-row flex-wrap">
+      <div class="flex-1 px-4">
+        <PageHeader className="mt-0">
+          <PageTitle>{series.data.title}</PageTitle>
+          <PageDescription>
+            {series.data.description}
+          </PageDescription>
+        </PageHeader>
 
-    <div class="prose prose-themed post-content mt-8">
-      <Content />
-    </div>
+        <div class="flex flex-row flex-wrap mt-4">
+          <SeriesPartBadge size="sm" numPosts={posts.length} />
+        </div>
 
-    <DotsSeparator className="my-8" />
-
-    <h2 class="text-2xl text-primary">Lesson Entries</h2>
-    <span class="block w-8 border-b-[1.5px] border-primary"></span>
-    <div class="flex flex-col gap-4 mt-8">
-      {searchItems.map((post) => <ArchivePostCard {...post} />)}
-      {
-        posts.length === 0 && (
-          <Empty className="border border-dashed py-16">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <BookOpenTextIcon />
-              </EmptyMedia>
-              <EmptyTitle>No lessons were found...</EmptyTitle>
-              <EmptyDescription>
-                Please check back later to see the lessons for this series
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        )
-      }
+        <div class="prose prose-themed post-content mt-8 max-w-full">
+          <Content />
+        </div>
+      </div>
+      <DotsSeparator className="my-8 lg:hidden" />
+      <div
+        class="flex-1 h-fit bg-secondary text-secondary-foreground p-4 md:rounded-sm md:mx-4 lg:ml-0 lg:mr-4"
+      >
+        <h2 class="text-2xl">Lesson Entries</h2>
+        <span class="block w-8 border-b-[1.5px] border-secondary-foreground"
+        ></span>
+        <div class="flex flex-col gap-4 mt-8">
+          {
+            searchItems.map((post) => (
+              <ArchivePostCard
+                {...post}
+                className="hover:bg-secondary-foreground/85"
+              />
+            ))
+          }
+          {
+            posts.length === 0 && (
+              <Empty className="border border-dashed py-16">
+                <EmptyHeader>
+                  <EmptyMedia variant="icon">
+                    <BookOpenTextIcon />
+                  </EmptyMedia>
+                  <EmptyTitle className="text-secondary-foreground">
+                    No lessons were found...
+                  </EmptyTitle>
+                  <EmptyDescription className="text-secondary-foreground/80">
+                    Please check back later to see the lessons for this series
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            )
+          }
+        </div>
+      </div>
     </div>
   </ContentSection>
 </BaseLayout>

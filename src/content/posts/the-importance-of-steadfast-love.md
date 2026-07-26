@@ -1,7 +1,7 @@
 ---
 title: The Importance of Steadfast Love
 description: A short devotional note on loving others with patience, consistency, and grace.
-pubDate: 2026-07-16
+pubDate: 2026-07-25
 author: wafflenotes
 coverImage: "@/images/nature.jpg"
 draft: false

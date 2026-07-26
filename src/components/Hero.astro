@@ -1,0 +1,68 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  image: ImageMetadata;
+  eyebrow?: string;
+  minHeight?: string;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  image,
+  eyebrow,
+  class: className = "",
+} = Astro.props;
+---
+
+<div
+  class={`hero-wrapper relative isolate min-h-[60vh] overflow-hidden flex items-center justify-center text-center ${className}`}
+>
+  <!-- The Generous Blur Background Layer -->
+  <div class="absolute inset-0 grid -z-10">
+    <Image
+      src={image}
+      alt=""
+      width={1920}
+      height={1080}
+      class="col-start-1 col-end-2 row-start-1 row-end-2 w-full h-full object-cover object-center blur-sm scale-110"
+      quality="low"
+      aria-hidden="true"
+    />
+    <!-- Subtle dark scrim overlay for text readability -->
+    <div
+      class="col-start-1 col-end-2 row-start-1 row-end-2 w-full h-full bg-black/40 backdrop-brightness-90"
+    >
+    </div>
+  </div>
+
+  <!-- Hero Content Layer -->
+  <div class="relative z-10 px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+    {
+      eyebrow && (
+        <p class="text-xs sm:text-sm font-medium tracking-[0.25em] text-neutral-200 uppercase mb-3 drop-shadow-md">
+          {eyebrow}
+        </p>
+      )
+    }
+    <h1
+      class="mt-6 text-4xl sm:text-5xl md:text-6xl font-serif font-normal text-white tracking-tight drop-shadow-lg"
+    >
+      {title}
+    </h1>
+    {
+      description && (
+        <p class="mt-4 text-sm sm:text-base font-medium text-neutral-200 drop-shadow-xl italic max-w-[40ch] mx-auto text-center">
+          {description}
+        </p>
+      )
+    }
+    <!-- Slot for extra elements like badges, buttons, etc. -->
+    <slot />
+  </div>
+</div>
